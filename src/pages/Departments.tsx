@@ -132,7 +132,7 @@ const DepartmentDetail = ({ deptId }: { deptId: string }) => {
           <div className="glass-card p-8 rounded-2xl">
             <h2 className="font-display text-2xl font-bold text-foreground mb-4">Department History</h2>
             <p className="text-muted-foreground leading-relaxed">
-              The {dept.name} department was established as part of the Faculty of Computing's mission to provide specialized education in key areas of computing. Since its inception, the department has grown to become a leading center for education and research in its field, attracting students and faculty from across Nigeria and beyond.
+              The Senate of the University of Ibadan approved the proposal for a Faculty of Computing on March 24th 2025 with four new departments and four new programmes in addition to the existing programme in Computer Science. The departments in the Faculty of Computing and the programmes are: Department of Computer Science and Artificial Intelligence which offers the B.Sc. Computer Science programme, Department of Data Science programme, which offers the B.Sc. Data Science programme, Department of Information and Communications Technology which offers the B.Sc. Cybersecurity, and the B.Sc. Information and Communications Technology programmes, and the Department of Software Engineering which offers the B.Sc. Software Engineering programme.
             </p>
           </div>
         </TabsContent>
