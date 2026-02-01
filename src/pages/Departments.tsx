@@ -9,6 +9,7 @@ import deptIct from "@/assets/dept-ict.jpg";
 import deptSoftware from "@/assets/dept-software.jpg";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import hodPhoto from "@/assets/hod-photo.jpg";
 const departments = [{
   id: "cs-ai",
   name: "Computer Science & Artificial Intelligence",
@@ -181,9 +182,11 @@ const DepartmentDetail = ({
           <div className="glass-card p-8 rounded-2xl">
             <h2 className="font-display text-2xl font-bold text-foreground mb-4">Head of Department</h2>
             <div className="flex flex-col md:flex-row gap-6">
-              <div className="w-32 h-32 rounded-xl bg-muted flex items-center justify-center">
-                <dept.icon className="w-12 h-12 text-primary" />
-              </div>
+              <img 
+                src={hodPhoto} 
+                alt="Prof. B.F Oladejo" 
+                className="w-32 h-32 rounded-xl object-cover"
+              />
               <div>
                 <h3 className="font-display text-xl font-semibold text-foreground">Prof. B.F Oladejo </h3>
                 <p className="text-primary mb-2">Head of Department</p>
