@@ -47,7 +47,7 @@ const departments = [{
 // Demo course data
 const courses100L = {
   first: [{
-    code: "CSC 101",
+    code: "C-GST 111",
     title: "Introduction to Computer Science",
     unit: 3,
     status: "Required"
