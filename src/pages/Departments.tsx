@@ -218,11 +218,7 @@ const DepartmentDetail = ({
                           <TableCell className="font-medium">{course.code}</TableCell>
                           <TableCell>{course.title}</TableCell>
                           <TableCell>{course.unit}</TableCell>
-                          <TableCell>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${course.status === "Required" ? "bg-primary/10 text-primary" : "bg-accent-gold/10 text-accent-gold"}`}>
-                              {course.status}
-                            </span>
-                          </TableCell>
+                          
                         </TableRow>)}
                     </TableBody>
                   </Table>
