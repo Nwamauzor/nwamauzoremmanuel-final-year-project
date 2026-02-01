@@ -2,19 +2,22 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import deanPhoto from "@/assets/dean-photo.jpg";
-
 const WelcomeSection = () => {
-  return (
-    <section className="py-16 lg:py-24 bg-background">
+  return <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.div initial={{
+          opacity: 0,
+          x: -30
+        }} whileInView={{
+          opacity: 1,
+          x: 0
+        }} viewport={{
+          once: true
+        }} transition={{
+          duration: 0.6
+        }}>
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               Welcome Message
             </span>
@@ -24,31 +27,38 @@ const WelcomeSection = () => {
             </h2>
             
             <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>
-                It is my distinct pleasure to welcome you to the Faculty of Computing, 
-                University of Ibadan. Our faculty is committed to producing world-class 
-                graduates who are equipped with cutting-edge skills in computing and 
-                information technology.
-              </p>
-              <p>
-                We pride ourselves on our exceptional faculty members, state-of-the-art 
-                facilities, and a curriculum that is continuously updated to meet the 
-                evolving demands of the global technology landscape.
-              </p>
-              <p>
-                Whether you are a prospective student, current student, alumnus, or 
-                industry partner, we invite you to explore our programs and discover the 
-                opportunities that await you at the Faculty of Computing.
-              </p>
+              <p>At the Faculty of Computing, we are committed to expanding the frontiers of knowledge by providing an excellent environment for learning, research, and innovation. Guided by the University of Ibadan’s mission to produce graduates of sound judgment and exemplary character, we strive to contribute meaningfully to societal transformation through creativity, ethical leadership, and cutting-edge technology.</p>
+              <p>Our faculty is dedicated to advancing knowledge and innovation in computing by delivering world-class, industry-relevant education, fostering groundbreaking research, and building strong partnerships with industry and society. We empower our students to become future-ready leaders in technology, equipped with technical expertise, problem-solving skills, and a strong ethical foundation.</p>
+              <p>Here, you will:
+
+Engage in high-impact research that addresses global challenges.
+Collaborate with industry leaders to bridge academia and real-world applications.
+Develop entrepreneurial and leadership skills to thrive in the digital economy.
+Champion diversity, inclusivity, and responsible computing for a sustainable future.
+
+Whether you are a student, researcher, industry partner, or visitor, we invite you to join us in shaping the future of computing—where knowledge, innovation, and societal impact converge.
+
+Welcome to a world of limitless possibilities at the Faculty of Computing, University of Ibadan!
+
+Excellence. Innovation. Leadership.
+
+Professor A.B Adeyemo
+
+Dean, Faculty of Computing</p>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="mt-8"
-            >
+            <motion.div initial={{
+            opacity: 0,
+            y: 20
+          }} whileInView={{
+            opacity: 1,
+            y: 0
+          }} viewport={{
+            once: true
+          }} transition={{
+            delay: 0.3,
+            duration: 0.5
+          }} className="mt-8">
               <Button className="bg-accent-gold hover:bg-accent-gold/90 text-accent-gold-foreground font-semibold px-6 py-3 h-auto rounded-lg shadow-md hover:shadow-lg transition-all group">
                 Read More
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -66,24 +76,25 @@ const WelcomeSection = () => {
           </motion.div>
 
           {/* Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
-          >
+          <motion.div initial={{
+          opacity: 0,
+          x: 30
+        }} whileInView={{
+          opacity: 1,
+          x: 0
+        }} viewport={{
+          once: true
+        }} transition={{
+          duration: 0.6,
+          delay: 0.2
+        }} className="relative">
             <div className="relative">
               {/* Background decoration */}
               <div className="absolute -inset-4 bg-gradient-sky rounded-2xl opacity-10 blur-2xl" />
               
               {/* Image container */}
               <div className="relative rounded-2xl overflow-hidden shadow-elevated">
-                <img
-                  src={deanPhoto}
-                  alt="Faculty Officer"
-                  className="w-full aspect-[4/5] object-cover"
-                />
+                <img src={deanPhoto} alt="Faculty Officer" className="w-full aspect-[4/5] object-cover" />
                 
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-transparent to-transparent" />
@@ -100,19 +111,19 @@ const WelcomeSection = () => {
               </div>
 
               {/* Floating badge */}
-              <motion.div
-                className="absolute -top-4 -right-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg font-display font-semibold text-sm"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              >
+              <motion.div className="absolute -top-4 -right-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg font-display font-semibold text-sm" animate={{
+              y: [0, -5, 0]
+            }} transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}>
                 Est. 2023
               </motion.div>
             </div>
           </motion.div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default WelcomeSection;

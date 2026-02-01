@@ -2,45 +2,72 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, ExternalLink, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import uiLogo from "@/assets/ui-logo.png";
-
 const Footer = () => {
-  const quickLinks = [
-    { label: "Home", href: "/" },
-    { label: "History", href: "/history" },
-    { label: "Departments", href: "/departments" },
-    { label: "Dean's Office", href: "/deans-office" },
-    { label: "Students", href: "/students" },
-    { label: "Alumni", href: "/alumni" },
-  ];
-
-  const universityLinks = [
-    { label: "UI Website", href: "https://ui.edu.ng", external: true },
-    { label: "UI Bulletin", href: "https://bulletin.ui.edu.ng", external: true },
-    { label: "LMS Portal", href: "https://lms.ui.edu.ng", external: true },
-    { label: "UI Mail", href: "https://mail.ui.edu.ng", external: true },
-    { label: "Student Portal", href: "https://studentportal.ui.edu.ng", external: true },
-  ];
-
-  const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-  ];
-
-  return (
-    <footer className="bg-gradient-dark text-secondary-foreground">
+  const quickLinks = [{
+    label: "Home",
+    href: "/"
+  }, {
+    label: "History",
+    href: "/history"
+  }, {
+    label: "Departments",
+    href: "/departments"
+  }, {
+    label: "Dean's Office",
+    href: "/deans-office"
+  }, {
+    label: "Students",
+    href: "/students"
+  }, {
+    label: "Alumni",
+    href: "/alumni"
+  }];
+  const universityLinks = [{
+    label: "UI Website",
+    href: "https://ui.edu.ng",
+    external: true
+  }, {
+    label: "UI Bulletin",
+    href: "https://bulletin.ui.edu.ng",
+    external: true
+  }, {
+    label: "LMS Portal",
+    href: "https://lms.ui.edu.ng",
+    external: true
+  }, {
+    label: "UI Mail",
+    href: "https://mail.ui.edu.ng",
+    external: true
+  }, {
+    label: "Student Portal",
+    href: "https://studentportal.ui.edu.ng",
+    external: true
+  }];
+  const socialLinks = [{
+    icon: Facebook,
+    href: "#",
+    label: "Facebook"
+  }, {
+    icon: Twitter,
+    href: "#",
+    label: "Twitter"
+  }, {
+    icon: Instagram,
+    href: "#",
+    label: "Instagram"
+  }, {
+    icon: Linkedin,
+    href: "#",
+    label: "LinkedIn"
+  }];
+  return <footer className="bg-gradient-dark text-secondary-foreground">
       {/* Main Footer */}
       <div className="container mx-auto px-4 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-6">
-              <img
-                src={uiLogo}
-                alt="UI Logo"
-                className="h-16 w-16 object-contain"
-              />
+              <img alt="UI Logo" className="h-16 w-16 object-contain" src="/lovable-uploads/7dd629c2-9512-4a4f-864b-a00e70de110e.png" />
               <div>
                 <h3 className="font-display font-bold text-lg text-white">
                   Faculty of Computing
@@ -54,20 +81,13 @@ const Footer = () => {
             
             {/* Social Links */}
             <div className="flex items-center gap-3">
-              {socialLinks.map((social) => (
-                <motion.a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  aria-label={social.label}
-                >
+              {socialLinks.map(social => <motion.a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white transition-colors" whileHover={{
+              scale: 1.1
+            }} whileTap={{
+              scale: 0.95
+            }} aria-label={social.label}>
                   <social.icon className="w-5 h-5" />
-                </motion.a>
-              ))}
+                </motion.a>)}
             </div>
           </div>
 
@@ -75,16 +95,11 @@ const Footer = () => {
           <div>
             <h4 className="font-display font-semibold text-white mb-6">Quick Links</h4>
             <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    to={link.href}
-                    className="text-sm text-white/70 hover:text-primary transition-colors inline-flex items-center gap-2"
-                  >
+              {quickLinks.map(link => <li key={link.href}>
+                  <Link to={link.href} className="text-sm text-white/70 hover:text-primary transition-colors inline-flex items-center gap-2">
                     {link.label}
                   </Link>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
 
@@ -92,19 +107,12 @@ const Footer = () => {
           <div>
             <h4 className="font-display font-semibold text-white mb-6">University Links</h4>
             <ul className="space-y-3">
-              {universityLinks.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-white/70 hover:text-primary transition-colors inline-flex items-center gap-2"
-                  >
+              {universityLinks.map(link => <li key={link.href}>
+                  <a href={link.href} target="_blank" rel="noopener noreferrer" className="text-sm text-white/70 hover:text-primary transition-colors inline-flex items-center gap-2">
                     {link.label}
                     <ExternalLink className="w-3 h-3" />
                   </a>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
 
@@ -122,19 +130,13 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <a
-                  href="tel:+2348012345678"
-                  className="text-sm text-white/70 hover:text-primary transition-colors"
-                >
+                <a href="tel:+2348012345678" className="text-sm text-white/70 hover:text-primary transition-colors">
                   +234 801 234 5678
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                <a
-                  href="mailto:computing@ui.edu.ng"
-                  className="text-sm text-white/70 hover:text-primary transition-colors"
-                >
+                <a href="mailto:computing@ui.edu.ng" className="text-sm text-white/70 hover:text-primary transition-colors">
                   computing@ui.edu.ng
                 </a>
               </li>
@@ -161,8 +163,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
