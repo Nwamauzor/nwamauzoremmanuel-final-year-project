@@ -7,100 +7,131 @@ import deptCsAi from "@/assets/dept-cs-ai.jpg";
 import deptDataScience from "@/assets/dept-data-science.jpg";
 import deptIct from "@/assets/dept-ict.jpg";
 import deptSoftware from "@/assets/dept-software.jpg";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-
-const departments = [
-  {
-    id: "cs-ai",
-    name: "Computer Science & Artificial Intelligence",
-    shortName: "CS & AI",
-    icon: Cpu,
-    image: deptCsAi,
-    description: "Pioneering research and education in computing and machine intelligence",
-    color: "from-blue-500 to-cyan-400",
-  },
-  {
-    id: "data-science",
-    name: "Department of Data Science",
-    shortName: "Data Science",
-    icon: Database,
-    image: deptDataScience,
-    description: "Transforming data into actionable insights and knowledge",
-    color: "from-purple-500 to-blue-400",
-  },
-  {
-    id: "ict",
-    name: "Information & Communication Technology",
-    shortName: "ICT",
-    icon: Wifi,
-    image: deptIct,
-    description: "Connecting the world through innovative technology solutions",
-    color: "from-teal-500 to-green-400",
-  },
-  {
-    id: "software",
-    name: "Software Technology",
-    shortName: "Software Tech",
-    icon: Code,
-    image: deptSoftware,
-    description: "Building the software systems that power modern society",
-    color: "from-orange-500 to-yellow-400",
-  },
-];
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+const departments = [{
+  id: "cs-ai",
+  name: "Computer Science & Artificial Intelligence",
+  shortName: "CS & AI",
+  icon: Cpu,
+  image: deptCsAi,
+  description: "Pioneering research and education in computing and machine intelligence",
+  color: "from-blue-500 to-cyan-400"
+}, {
+  id: "data-science",
+  name: "Department of Data Science",
+  shortName: "Data Science",
+  icon: Database,
+  image: deptDataScience,
+  description: "Transforming data into actionable insights and knowledge",
+  color: "from-purple-500 to-blue-400"
+}, {
+  id: "ict",
+  name: "Information & Communication Technology",
+  shortName: "ICT",
+  icon: Wifi,
+  image: deptIct,
+  description: "Connecting the world through innovative technology solutions",
+  color: "from-teal-500 to-green-400"
+}, {
+  id: "software",
+  name: "Software Technology",
+  shortName: "Software Tech",
+  icon: Code,
+  image: deptSoftware,
+  description: "Building the software systems that power modern society",
+  color: "from-orange-500 to-yellow-400"
+}];
 
 // Demo course data
 const courses100L = {
-  first: [
-    { code: "CSC 101", title: "Introduction to Computer Science", unit: 3, status: "Required" },
-    { code: "CSC 102", title: "Programming Fundamentals", unit: 3, status: "Required" },
-    { code: "MTH 101", title: "Elementary Mathematics I", unit: 3, status: "Compulsory" },
-    { code: "PHY 101", title: "General Physics I", unit: 3, status: "Compulsory" },
-    { code: "GES 101", title: "Use of English I", unit: 2, status: "Compulsory" },
-  ],
-  second: [
-    { code: "CSC 103", title: "Introduction to Problem Solving", unit: 3, status: "Required" },
-    { code: "CSC 104", title: "Programming with Python", unit: 3, status: "Required" },
-    { code: "MTH 102", title: "Elementary Mathematics II", unit: 3, status: "Compulsory" },
-    { code: "PHY 102", title: "General Physics II", unit: 3, status: "Compulsory" },
-    { code: "GES 102", title: "Use of English II", unit: 2, status: "Compulsory" },
-  ],
+  first: [{
+    code: "CSC 101",
+    title: "Introduction to Computer Science",
+    unit: 3,
+    status: "Required"
+  }, {
+    code: "CSC 102",
+    title: "Programming Fundamentals",
+    unit: 3,
+    status: "Required"
+  }, {
+    code: "MTH 101",
+    title: "Elementary Mathematics I",
+    unit: 3,
+    status: "Compulsory"
+  }, {
+    code: "PHY 101",
+    title: "General Physics I",
+    unit: 3,
+    status: "Compulsory"
+  }, {
+    code: "GES 101",
+    title: "Use of English I",
+    unit: 2,
+    status: "Compulsory"
+  }],
+  second: [{
+    code: "CSC 103",
+    title: "Introduction to Problem Solving",
+    unit: 3,
+    status: "Required"
+  }, {
+    code: "CSC 104",
+    title: "Programming with Python",
+    unit: 3,
+    status: "Required"
+  }, {
+    code: "MTH 102",
+    title: "Elementary Mathematics II",
+    unit: 3,
+    status: "Compulsory"
+  }, {
+    code: "PHY 102",
+    title: "General Physics II",
+    unit: 3,
+    status: "Compulsory"
+  }, {
+    code: "GES 102",
+    title: "Use of English II",
+    unit: 2,
+    status: "Compulsory"
+  }]
 };
 
 // Demo staff data
-const staffData = [
-  { name: "Prof. John Adebayo", qualification: "Ph.D Computer Science (MIT)", designation: "Professor", specialization: "Artificial Intelligence" },
-  { name: "Dr. Mary Okonkwo", qualification: "Ph.D Data Science (Stanford)", designation: "Senior Lecturer", specialization: "Machine Learning" },
-  { name: "Dr. Samuel Eze", qualification: "Ph.D Software Engineering (CMU)", designation: "Lecturer I", specialization: "Software Architecture" },
-  { name: "Mr. David Olamide", qualification: "M.Sc Computer Science (UI)", designation: "Lecturer II", specialization: "Network Security" },
-];
-
-const DepartmentDetail = ({ deptId }: { deptId: string }) => {
-  const dept = departments.find((d) => d.id === deptId);
-
+const staffData = [{
+  name: "Prof. John Adebayo",
+  qualification: "Ph.D Computer Science (MIT)",
+  designation: "Professor",
+  specialization: "Artificial Intelligence"
+}, {
+  name: "Dr. Mary Okonkwo",
+  qualification: "Ph.D Data Science (Stanford)",
+  designation: "Senior Lecturer",
+  specialization: "Machine Learning"
+}, {
+  name: "Dr. Samuel Eze",
+  qualification: "Ph.D Software Engineering (CMU)",
+  designation: "Lecturer I",
+  specialization: "Software Architecture"
+}, {
+  name: "Mr. David Olamide",
+  qualification: "M.Sc Computer Science (UI)",
+  designation: "Lecturer II",
+  specialization: "Network Security"
+}];
+const DepartmentDetail = ({
+  deptId
+}: {
+  deptId: string;
+}) => {
+  const dept = departments.find(d => d.id === deptId);
   if (!dept) return null;
-
-  return (
-    <div className="space-y-12">
+  return <div className="space-y-12">
       {/* Department Hero */}
       <section className="relative h-80 rounded-2xl overflow-hidden">
-        <img
-          src={dept.image}
-          alt={dept.name}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <img src={dept.image} alt={dept.name} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-secondary via-secondary/70 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="flex items-center gap-4 mb-4">
@@ -154,7 +185,7 @@ const DepartmentDetail = ({ deptId }: { deptId: string }) => {
                 <dept.icon className="w-12 h-12 text-primary" />
               </div>
               <div>
-                <h3 className="font-display text-xl font-semibold text-foreground">Prof. John Adebayo</h3>
+                <h3 className="font-display text-xl font-semibold text-foreground">Prof. B.F Oladejo </h3>
                 <p className="text-primary mb-2">Head of Department</p>
                 <p className="text-muted-foreground text-sm">Ph.D Computer Science (MIT)</p>
                 <p className="text-muted-foreground mt-4 leading-relaxed">
@@ -183,22 +214,16 @@ const DepartmentDetail = ({ deptId }: { deptId: string }) => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {courses100L.first.map((course) => (
-                        <TableRow key={course.code}>
+                      {courses100L.first.map(course => <TableRow key={course.code}>
                           <TableCell className="font-medium">{course.code}</TableCell>
                           <TableCell>{course.title}</TableCell>
                           <TableCell>{course.unit}</TableCell>
                           <TableCell>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              course.status === "Required" 
-                                ? "bg-primary/10 text-primary" 
-                                : "bg-accent-gold/10 text-accent-gold"
-                            }`}>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${course.status === "Required" ? "bg-primary/10 text-primary" : "bg-accent-gold/10 text-accent-gold"}`}>
                               {course.status}
                             </span>
                           </TableCell>
-                        </TableRow>
-                      ))}
+                        </TableRow>)}
                     </TableBody>
                   </Table>
                 </div>
@@ -217,22 +242,16 @@ const DepartmentDetail = ({ deptId }: { deptId: string }) => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {courses100L.second.map((course) => (
-                        <TableRow key={course.code}>
+                      {courses100L.second.map(course => <TableRow key={course.code}>
                           <TableCell className="font-medium">{course.code}</TableCell>
                           <TableCell>{course.title}</TableCell>
                           <TableCell>{course.unit}</TableCell>
                           <TableCell>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              course.status === "Required" 
-                                ? "bg-primary/10 text-primary" 
-                                : "bg-accent-gold/10 text-accent-gold"
-                            }`}>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${course.status === "Required" ? "bg-primary/10 text-primary" : "bg-accent-gold/10 text-accent-gold"}`}>
                               {course.status}
                             </span>
                           </TableCell>
-                        </TableRow>
-                      ))}
+                        </TableRow>)}
                     </TableBody>
                   </Table>
                 </div>
@@ -255,14 +274,12 @@ const DepartmentDetail = ({ deptId }: { deptId: string }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {staffData.map((staff) => (
-                    <TableRow key={staff.name}>
+                  {staffData.map(staff => <TableRow key={staff.name}>
                       <TableCell className="font-medium">{staff.name}</TableCell>
                       <TableCell>{staff.qualification}</TableCell>
                       <TableCell>{staff.designation}</TableCell>
                       <TableCell>{staff.specialization}</TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </div>
@@ -280,32 +297,29 @@ const DepartmentDetail = ({ deptId }: { deptId: string }) => {
           </div>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 const Departments = () => {
-  const { deptId } = useParams();
-
-  return (
-    <Layout>
+  const {
+    deptId
+  } = useParams();
+  return <Layout>
       {/* Hero Banner */}
       <section className="relative py-24 lg:py-32 bg-gradient-sky overflow-hidden">
         <div className="absolute inset-0 circuit-bg opacity-10" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} className="text-center">
             <h1 className="font-display text-4xl lg:text-5xl font-bold text-white mb-4">
               {deptId ? departments.find(d => d.id === deptId)?.name : "Our Departments"}
             </h1>
             <p className="text-lg text-white/80 max-w-2xl mx-auto">
-              {deptId 
-                ? "Explore our programs, courses, and faculty"
-                : "Four specialized departments driving innovation in computing education"
-              }
+              {deptId ? "Explore our programs, courses, and faculty" : "Four specialized departments driving innovation in computing education"}
             </p>
           </motion.div>
         </div>
@@ -314,25 +328,21 @@ const Departments = () => {
       {/* Content */}
       <section className="py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-          {deptId ? (
-            <DepartmentDetail deptId={deptId} />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {departments.map((dept, index) => (
-                <motion.div
-                  key={dept.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
+          {deptId ? <DepartmentDetail deptId={deptId} /> : <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {departments.map((dept, index) => <motion.div key={dept.id} initial={{
+            opacity: 0,
+            y: 30
+          }} whileInView={{
+            opacity: 1,
+            y: 0
+          }} viewport={{
+            once: true
+          }} transition={{
+            delay: index * 0.1
+          }}>
                   <Link to={`/departments/${dept.id}`} className="group block">
                     <div className="relative h-72 rounded-2xl overflow-hidden shadow-soft hover:shadow-elevated transition-shadow">
-                      <img
-                        src={dept.image}
-                        alt={dept.name}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
+                      <img src={dept.image} alt={dept.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                       <div className="absolute inset-0 bg-gradient-to-t from-secondary via-secondary/60 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-6">
                         <div className="flex items-center gap-3 mb-3">
@@ -351,14 +361,10 @@ const Departments = () => {
                       </div>
                     </div>
                   </Link>
-                </motion.div>
-              ))}
-            </div>
-          )}
+                </motion.div>)}
+            </div>}
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Departments;
