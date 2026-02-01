@@ -73,8 +73,9 @@ const HeroSection = () => {
           }} transition={{
             delay: 0.4
           }}>
-              Faculty of{" "}
-              
+              Faculty of
+              <br />
+              Computing
             </motion.h1>
 
             <motion.p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0" initial={{
