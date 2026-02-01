@@ -1,24 +1,20 @@
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import uiLogo from "@/assets/ui-logo.png";
-
 const History = () => {
-  return (
-    <Layout>
+  return <Layout>
       {/* Hero Banner */}
       <section className="relative py-24 lg:py-32 bg-gradient-sky overflow-hidden">
         <div className="absolute inset-0 circuit-bg opacity-10" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center text-center"
-          >
-            <img
-              src={uiLogo}
-              alt="UI Logo"
-              className="w-24 h-24 object-contain mb-6"
-            />
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} className="flex flex-col items-center text-center">
+            <img alt="UI Logo" className="w-24 h-24 object-contain mb-6" src="/lovable-uploads/cf23c246-01cc-4cba-802f-6f65ffa20f33.png" />
             <h1 className="font-display text-4xl lg:text-5xl font-bold text-white mb-4">
               Computing UI History
             </h1>
@@ -33,12 +29,15 @@ const History = () => {
       <section className="py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="prose prose-lg max-w-none"
-            >
+            <motion.div initial={{
+            opacity: 0,
+            y: 20
+          }} whileInView={{
+            opacity: 1,
+            y: 0
+          }} viewport={{
+            once: true
+          }} className="prose prose-lg max-w-none">
               <div className="space-y-8 text-muted-foreground">
                 <div className="glass-card p-8 rounded-2xl">
                   <h2 className="font-display text-2xl font-bold text-foreground mb-4">
@@ -98,8 +97,6 @@ const History = () => {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default History;
