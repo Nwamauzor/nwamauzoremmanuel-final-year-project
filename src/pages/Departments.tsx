@@ -187,9 +187,9 @@ const DepartmentDetail = ({
               <div>
                 <h3 className="font-display text-xl font-semibold text-foreground">Prof. B.F Oladejo </h3>
                 <p className="text-primary mb-2">Head of Department</p>
-                <p className="text-muted-foreground text-sm">Ph.D Computer Science (MIT)</p>
+                <p className="text-muted-foreground text-sm">Ph.D Computer Science </p>
                 <p className="text-muted-foreground mt-4 leading-relaxed">
-                  Prof. Adebayo has over 20 years of experience in academia and industry. His research focuses on artificial intelligence and machine learning applications.
+                  Prof. Bolanle F. Oladejo has the following qualifications; NCE Computer  Science (Maths) 1994; B.Sc.  Computer  Science 1999, M.Sc Computer Science 2003,  Ph.D. Computer Science 2010 (Ibadan), Ph.D Computer Science 2010, (Nancy). Member CPN, NCS                                                  
                 </p>
               </div>
             </div>
