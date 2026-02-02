@@ -10,6 +10,9 @@ import deptSoftware from "@/assets/dept-software.jpg";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import hodPhoto from "@/assets/hod-photo.jpg";
+import { departmentDataMap, type DepartmentData } from "@/data/departmentData";
+import { useState } from "react";
+
 const departments = [{
   id: "cs-ai",
   name: "Computer Science & Artificial Intelligence",
@@ -44,92 +47,23 @@ const departments = [{
   color: "from-orange-500 to-yellow-400"
 }];
 
-// Demo course data
-const courses100L = {
-  first: [{
-    code: "C-GST 111",
-    title: "Introduction to Computer Science",
-    unit: 3,
-    status: "Required"
-  }, {
-    code: "CSC 102",
-    title: "Programming Fundamentals",
-    unit: 3,
-    status: "Required"
-  }, {
-    code: "MTH 101",
-    title: "Elementary Mathematics I",
-    unit: 3,
-    status: "Compulsory"
-  }, {
-    code: "PHY 101",
-    title: "General Physics I",
-    unit: 3,
-    status: "Compulsory"
-  }, {
-    code: "GES 101",
-    title: "Use of English I",
-    unit: 2,
-    status: "Compulsory"
-  }],
-  second: [{
-    code: "CSC 103",
-    title: "Introduction to Problem Solving",
-    unit: 3,
-    status: "Required"
-  }, {
-    code: "CSC 104",
-    title: "Programming with Python",
-    unit: 3,
-    status: "Required"
-  }, {
-    code: "MTH 102",
-    title: "Elementary Mathematics II",
-    unit: 3,
-    status: "Compulsory"
-  }, {
-    code: "PHY 102",
-    title: "General Physics II",
-    unit: 3,
-    status: "Compulsory"
-  }, {
-    code: "GES 102",
-    title: "Use of English II",
-    unit: 2,
-    status: "Compulsory"
-  }]
-};
+const levels = ["100L", "200L", "300L", "400L", "500L"] as const;
 
-// Demo staff data
-const staffData = [{
-  name: "Prof. John Adebayo",
-  qualification: "Ph.D Computer Science (MIT)",
-  designation: "Professor",
-  specialization: "Artificial Intelligence"
-}, {
-  name: "Dr. Mary Okonkwo",
-  qualification: "Ph.D Data Science (Stanford)",
-  designation: "Senior Lecturer",
-  specialization: "Machine Learning"
-}, {
-  name: "Dr. Samuel Eze",
-  qualification: "Ph.D Software Engineering (CMU)",
-  designation: "Lecturer I",
-  specialization: "Software Architecture"
-}, {
-  name: "Mr. David Olamide",
-  qualification: "M.Sc Computer Science (UI)",
-  designation: "Lecturer II",
-  specialization: "Network Security"
-}];
 const DepartmentDetail = ({
   deptId
 }: {
   deptId: string;
 }) => {
   const dept = departments.find(d => d.id === deptId);
-  if (!dept) return null;
-  return <div className="space-y-12">
+  const deptData = departmentDataMap[deptId];
+  const [selectedLevel, setSelectedLevel] = useState<typeof levels[number]>("100L");
+  
+  if (!dept || !deptData) return null;
+
+  const currentCourses = deptData.courses[selectedLevel];
+
+  return (
+    <div className="space-y-12">
       {/* Department Hero */}
       <section className="relative h-80 rounded-2xl overflow-hidden">
         <img src={dept.image} alt={dept.name} className="absolute inset-0 w-full h-full object-cover" />
@@ -164,7 +98,7 @@ const DepartmentDetail = ({
           <div className="glass-card p-8 rounded-2xl">
             <h2 className="font-display text-2xl font-bold text-foreground mb-4">Department History</h2>
             <p className="text-muted-foreground leading-relaxed">
-              The Senate of the University of Ibadan approved the proposal for a Faculty of Computing on March 24th 2025 with four new departments and four new programmes in addition to the existing programme in Computer Science. The departments in the Faculty of Computing and the programmes are: Department of Computer Science and Artificial Intelligence which offers the B.Sc. Computer Science programme, Department of Data Science programme, which offers the B.Sc. Data Science programme, Department of Information and Communications Technology which offers the B.Sc. Cybersecurity, and the B.Sc. Information and Communications Technology programmes, and the Department of Software Engineering which offers the B.Sc. Software Engineering programme.
+              {deptData.history}
             </p>
           </div>
         </TabsContent>
@@ -173,7 +107,7 @@ const DepartmentDetail = ({
           <div className="glass-card p-8 rounded-2xl">
             <h2 className="font-display text-2xl font-bold text-foreground mb-4">Welcome Message</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Welcome to the {dept.name} department. We are committed to providing excellent education and fostering innovation in our field. Our programs are designed to equip students with the skills and knowledge needed to excel in their careers and contribute to the advancement of technology.
+              {deptData.welcomeMessage}
             </p>
           </div>
         </TabsContent>
@@ -184,15 +118,15 @@ const DepartmentDetail = ({
             <div className="flex flex-col md:flex-row gap-6">
               <img 
                 src={hodPhoto} 
-                alt="Prof. B.F Oladejo" 
+                alt={deptData.hodName}
                 className="w-32 h-32 rounded-xl object-cover"
               />
               <div>
-                <h3 className="font-display text-xl font-semibold text-foreground">Prof. B.F Oladejo </h3>
+                <h3 className="font-display text-xl font-semibold text-foreground">{deptData.hodName}</h3>
                 <p className="text-primary mb-2">Head of Department</p>
-                <p className="text-muted-foreground text-sm">Ph.D Computer Science </p>
+                <p className="text-muted-foreground text-sm">{deptData.hodQualification}</p>
                 <p className="text-muted-foreground mt-4 leading-relaxed">
-                  Prof. Bolanle F. Oladejo has the following qualifications; NCE Computer  Science (Maths) 1994; B.Sc.  Computer  Science 1999, M.Sc Computer Science 2003,  Ph.D. Computer Science 2010 (Ibadan), Ph.D Computer Science 2010, (Nancy). Member CPN, NCS                                                  
+                  {deptData.hodBio}
                 </p>
               </div>
             </div>
@@ -201,7 +135,24 @@ const DepartmentDetail = ({
 
         <TabsContent value="courses" className="mt-6">
           <div className="glass-card p-8 rounded-2xl">
-            <h2 className="font-display text-2xl font-bold text-foreground mb-6">Course Offerings - 100 Level</h2>
+            <h2 className="font-display text-2xl font-bold text-foreground mb-6">Course Offerings</h2>
+            
+            {/* Level Selector */}
+            <div className="flex flex-wrap gap-2 mb-8">
+              {levels.map((level) => (
+                <button
+                  key={level}
+                  onClick={() => setSelectedLevel(level)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    selectedLevel === level
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  }`}
+                >
+                  {level}
+                </button>
+              ))}
+            </div>
             
             <div className="space-y-8">
               <div>
@@ -217,12 +168,24 @@ const DepartmentDetail = ({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {courses100L.first.map(course => <TableRow key={course.code}>
+                      {currentCourses.first.map(course => (
+                        <TableRow key={course.code}>
                           <TableCell className="font-medium">{course.code}</TableCell>
                           <TableCell>{course.title}</TableCell>
                           <TableCell>{course.unit}</TableCell>
-                          
-                        </TableRow>)}
+                          <TableCell>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              course.status === "Required" 
+                                ? "bg-primary/10 text-primary" 
+                                : course.status === "Elective"
+                                ? "bg-blue-500/10 text-blue-500"
+                                : "bg-accent-gold/10 text-accent-gold"
+                            }`}>
+                              {course.status}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>
@@ -241,16 +204,24 @@ const DepartmentDetail = ({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {courses100L.second.map(course => <TableRow key={course.code}>
+                      {currentCourses.second.map(course => (
+                        <TableRow key={course.code}>
                           <TableCell className="font-medium">{course.code}</TableCell>
                           <TableCell>{course.title}</TableCell>
                           <TableCell>{course.unit}</TableCell>
                           <TableCell>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${course.status === "Required" ? "bg-primary/10 text-primary" : "bg-accent-gold/10 text-accent-gold"}`}>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              course.status === "Required" 
+                                ? "bg-primary/10 text-primary" 
+                                : course.status === "Elective"
+                                ? "bg-blue-500/10 text-blue-500"
+                                : "bg-accent-gold/10 text-accent-gold"
+                            }`}>
                               {course.status}
                             </span>
                           </TableCell>
-                        </TableRow>)}
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>
@@ -273,12 +244,14 @@ const DepartmentDetail = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {staffData.map(staff => <TableRow key={staff.name}>
+                  {deptData.staff.map(staff => (
+                    <TableRow key={staff.name}>
                       <TableCell className="font-medium">{staff.name}</TableCell>
                       <TableCell>{staff.qualification}</TableCell>
                       <TableCell>{staff.designation}</TableCell>
                       <TableCell>{staff.specialization}</TableCell>
-                    </TableRow>)}
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>
@@ -289,31 +262,31 @@ const DepartmentDetail = ({
           <div className="glass-card p-8 rounded-2xl">
             <h2 className="font-display text-2xl font-bold text-foreground mb-4">Contact Information</h2>
             <div className="space-y-4 text-muted-foreground">
-              <p><strong className="text-foreground">Address:</strong> {dept.name}, Faculty of Computing, University of Ibadan</p>
-              <p><strong className="text-foreground">Email:</strong> {deptId}@computing.ui.edu.ng</p>
-              <p><strong className="text-foreground">Phone:</strong> +234 801 234 5678</p>
+              <p><strong className="text-foreground">Address:</strong> {deptData.contact.address}</p>
+              <p><strong className="text-foreground">Email:</strong> {deptData.contact.email}</p>
+              <p><strong className="text-foreground">Phone:</strong> {deptData.contact.phone}</p>
             </div>
           </div>
         </TabsContent>
       </Tabs>
-    </div>;
+    </div>
+  );
 };
+
 const Departments = () => {
-  const {
-    deptId
-  } = useParams();
-  return <Layout>
+  const { deptId } = useParams();
+  
+  return (
+    <Layout>
       {/* Hero Banner */}
       <section className="relative py-24 lg:py-32 bg-gradient-sky overflow-hidden">
         <div className="absolute inset-0 circuit-bg opacity-10" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
-          <motion.div initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} className="text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            className="text-center"
+          >
             <h1 className="font-display text-4xl lg:text-5xl font-bold text-white mb-4">
               {deptId ? departments.find(d => d.id === deptId)?.name : "Our Departments"}
             </h1>
@@ -327,18 +300,18 @@ const Departments = () => {
       {/* Content */}
       <section className="py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-          {deptId ? <DepartmentDetail deptId={deptId} /> : <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {departments.map((dept, index) => <motion.div key={dept.id} initial={{
-            opacity: 0,
-            y: 30
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} viewport={{
-            once: true
-          }} transition={{
-            delay: index * 0.1
-          }}>
+          {deptId ? (
+            <DepartmentDetail deptId={deptId} />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {departments.map((dept, index) => (
+                <motion.div 
+                  key={dept.id} 
+                  initial={{ opacity: 0, y: 30 }} 
+                  whileInView={{ opacity: 1, y: 0 }} 
+                  viewport={{ once: true }} 
+                  transition={{ delay: index * 0.1 }}
+                >
                   <Link to={`/departments/${dept.id}`} className="group block">
                     <div className="relative h-72 rounded-2xl overflow-hidden shadow-soft hover:shadow-elevated transition-shadow">
                       <img src={dept.image} alt={dept.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
@@ -360,10 +333,14 @@ const Departments = () => {
                       </div>
                     </div>
                   </Link>
-                </motion.div>)}
-            </div>}
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
-    </Layout>;
+    </Layout>
+  );
 };
+
 export default Departments;
