@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { GraduationCap, Calendar, ClipboardCheck, Shield, ExternalLink } from "lucide-react";
+import { GraduationCap, Calendar, ClipboardCheck, Shield, ExternalLink, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -210,10 +210,85 @@ const ConductDiscipline = () => (
   </div>
 );
 
+// Grading data
+const letterGrades = [
+  { grade: "A", point: 5, mark: "70 - 100" },
+  { grade: "B", point: 4, mark: "60 - 69" },
+  { grade: "C", point: 3, mark: "50 - 59" },
+  { grade: "D", point: 2, mark: "45 - 49" },
+  { grade: "E", point: 1, mark: "40 - 44" },
+  { grade: "F", point: 0, mark: "0 - 39" },
+];
+
+const degreeClasses = [
+  { cgpa: "4.50 - 5.00", classification: "First Class" },
+  { cgpa: "3.50 - 4.49", classification: "Second Class Upper" },
+  { cgpa: "2.40 - 3.49", classification: "Second Class Lower" },
+  { cgpa: "1.50 - 2.39", classification: "Third Class" },
+  { cgpa: "1.00 - 1.49", classification: "Pass" },
+];
+
+const Grading = () => (
+  <div className="space-y-8">
+    <div className="glass-card p-8 rounded-2xl">
+      <h2 className="font-display text-2xl font-bold text-foreground mb-6">Grading of Courses</h2>
+      <p className="text-muted-foreground mb-6">
+        The grading system used by the Faculty of Computing follows the University of Ibadan's standard grading policy.
+      </p>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Letter Grade</TableHead>
+              <TableHead>Grade Point</TableHead>
+              <TableHead>Mark (%)</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {letterGrades.map((item) => (
+              <TableRow key={item.grade}>
+                <TableCell className="font-semibold text-primary">{item.grade}</TableCell>
+                <TableCell>{item.point}</TableCell>
+                <TableCell>{item.mark}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+
+    <div className="glass-card p-8 rounded-2xl">
+      <h2 className="font-display text-2xl font-bold text-foreground mb-6">Class of Degree</h2>
+      <p className="text-muted-foreground mb-6">
+        The class of degree awarded is based on the Cumulative Grade Point Average (CGPA) at graduation.
+      </p>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Cumulative Grade Point Average (CGPA)</TableHead>
+              <TableHead>Class of Degree</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {degreeClasses.map((item) => (
+              <TableRow key={item.cgpa}>
+                <TableCell className="font-medium">{item.cgpa}</TableCell>
+                <TableCell className="font-semibold text-primary">{item.classification}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  </div>
+);
+
 const subpages = [
   { id: "admission", label: "Admission", icon: GraduationCap },
   { id: "activities", label: "Activities", icon: Calendar },
   { id: "registration", label: "Registration", icon: ClipboardCheck },
+  { id: "grading", label: "Grading of Courses", icon: BookOpen },
   { id: "conduct", label: "Conduct & Discipline", icon: Shield },
 ];
 
@@ -229,6 +304,8 @@ const Students = () => {
         return <Activities />;
       case "registration":
         return <Registration />;
+      case "grading":
+        return <Grading />;
       case "conduct":
         return <ConductDiscipline />;
       default:
