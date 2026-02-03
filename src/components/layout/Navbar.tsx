@@ -63,6 +63,9 @@ const navItems: NavItem[] = [{
     label: "Registration",
     href: "/students/registration"
   }, {
+    label: "Grading of Courses",
+    href: "/students/grading"
+  }, {
     label: "Conduct & Discipline",
     href: "/students/conduct"
   }]
@@ -131,9 +134,14 @@ const Navbar = () => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full">
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
+            <div className="relative group">
+              <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full">
+                {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+              <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-border">
+                {darkMode ? "Light Mode" : "Dark Mode"}
+              </span>
+            </div>
 
             {/* Mobile menu button */}
             <Button variant="ghost" size="icon" className="lg:hidden rounded-full" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
