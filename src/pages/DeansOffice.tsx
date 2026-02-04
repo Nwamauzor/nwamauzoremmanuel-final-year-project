@@ -26,22 +26,42 @@ import { FloatingOrbs, AnimatedCard } from "@/components/animations/DecorativeEl
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/animations/PageTransition";
 
 const academicStaff = [
-  { name: "Prof. A. B. Adeyemo", qualification: "Ph.D Computer Science", designation: "Professor/Dean", specialization: "AI & Machine Learning" },
-  { name: "Dr. C. D. Ogunleye", qualification: "Ph.D Data Science", designation: "Professor", specialization: "Data Analytics" },
-  { name: "Dr. E. F. Akinola", qualification: "Ph.D Software Engineering", designation: "Senior Lecturer", specialization: "Software Architecture" },
-  { name: "Dr. G. H. Ibrahim", qualification: "Ph.D Information Systems", designation: "Lecturer I", specialization: "Information Security" },
+  // CS & AI Department Staff
+  { name: "Prof. O.F.W Onifade", qualification: "B.Sc., M.Sc. Computer Science (Ibadan), PhD Computer Science (Ibadan and Nancy)", designation: "Professor", specialization: "Computer Vision, Machine Learning, Information Risk Management" },
+  { name: "Prof. B.O. Akinkunmi", qualification: "B.Sc. Computer Science (Ibadan), M.Sc. Physics (Ibadan), PhD Computer Science (Ibadan)", designation: "Professor", specialization: "Knowledge Representation and Formal Ontologies" },
+  { name: "Prof. Fausat B. Oladejo", qualification: "B.Sc., M.Sc. Computer Science (Ibadan), PhD Computer Science (Ibadan and Nancy)", designation: "Professor", specialization: "Knowledge Management, AI, Business Intelligence, Software Engineering, NLP" },
+  { name: "Dr. Nancy C. Woods", qualification: "B.Sc., M.Sc., PhD Computer Science (Ibadan)", designation: "Senior Lecturer", specialization: "Image Processing, Pattern Recognition" },
+  { name: "Khadijat Ladoja", qualification: "B.Sc. Computer Science (Ilorin), M.Sc., PhD Computer Science (Ibadan)", designation: "Lecturer II", specialization: "Machine Learning, Computer Vision and Robotics" },
+  // Data Science Department Staff
+  { name: "A.B. Adeyemo", qualification: "B.Sc. Engineering Physics (Ife), PGD, M.Tech., PhD Computer Science (Akure)", designation: "Professor", specialization: "Data Mining, Mobile and Internet Computing" },
+  { name: "Adebola K. Ojo", qualification: "B.Sc. Computer Engineering (Ife), M.Sc., PhD Computer Science (Ibadan)", designation: "Reader", specialization: "Data/Web Mining, Computer Networks and Hardware" },
+  { name: "Aderonke B. Sakpere", qualification: "B.Sc. Computer Science (Ado Ekiti), M.Sc. (Ilorin), PhD (UCT)", designation: "Senior Lecturer", specialization: "Data Privacy, ICT for Development, Human Computer Interaction" },
+  { name: "B.I. Ayinla", qualification: "B.Sc. Computer Science (OOU), M.Sc., PhD Computer Science (Ibadan)", designation: "Lecturer II", specialization: "Software Engineering, Machine Learning Algorithm, Cybersecurity" },
+  { name: "Elizabeth O. Ogunseye", qualification: "B.Sc. Computer Science (Ekpoma), M.Sc. Computer Science (Ibadan)", designation: "Lecturer II", specialization: "Health Informatics, Data Science" },
+  { name: "Angela U. Makolo", qualification: "B.Sc. Computer Science (Benin), M.Sc., PhD Computer Science (Ibadan)", designation: "Reader", specialization: "Bioinformatics, Software Engineering" },
+  // ICT Department Staff
+  { name: "O. Osunade", qualification: "B.Sc. Computer Engineering (Ife), M.Sc. (Ibadan), MBA (Akure), PhD (Ibadan)", designation: "Professor", specialization: "Computer Networks and Data Communications, NLP" },
+  { name: "T. Oguntunde", qualification: "B.Sc., M.Sc., PhD Computer Science (Ibadan)", designation: "Senior Lecturer", specialization: "Networking, Collaborative Learning Objects" },
+  { name: "O.D. Adeniji", qualification: "B.Eng. Computer Engineering (Minna), M.Sc. (Malaysia), PhD (Ibadan)", designation: "Senior Lecturer", specialization: "Wireless Computing, Network Security and Hardware" },
+  { name: "O. Adeleke", qualification: "B.Sc. Computer Science (LASU), M.Sc. (Akure), PhD (Ibadan)", designation: "Lecturer II", specialization: "Data Communications, Networking, Mobile Agents" },
+  { name: "O.A. Abiola", qualification: "B.Sc. Computer Science (Ekpoma), M.Sc. Computer Science (Ibadan)", designation: "Lecturer II", specialization: "Software Engineering, Autonomous Robotic Navigation" },
+  // Software Engineering Department Staff
+  { name: "S.O. Akinola", qualification: "B.Sc. Computer Science (Ibadan), M.Inf Science (Ibadan), PhD (Ibadan)", designation: "Professor", specialization: "Software Engineering, Data Mining" },
+  { name: "Ibiyinka T. Ayorinde", qualification: "B.Tech. Computer Science (Akure), M.Sc., PhD Computer Science (Ibadan)", designation: "Reader", specialization: "Knowledge Representation, Data Mining and Software Engineering" },
+  { name: "I.O. Olaleye", qualification: "B.Sc. Computer Science (Iwo), M.Sc. Computer Science (Ibadan)", designation: "Assistant Lecturer", specialization: "Software Engineering, Artificial Intelligence" },
+  { name: "S.O. Titiloye", qualification: "B.Sc. Computer Science (Iwo), M.Sc. Computer Science (Ibadan)", designation: "Assistant Lecturer", specialization: "Software Engineering, Artificial Intelligence" },
 ];
 
 const technicalStaff = [
-  { name: "Mr. I. J. Okafor", qualification: "M.Sc Computer Science", designation: "Chief Technologist", specialization: "Lab Management" },
-  { name: "Mrs. K. L. Adamu", qualification: "B.Sc Computer Science", designation: "Senior Technologist", specialization: "Network Administration" },
-  { name: "Mr. M. N. Olawale", qualification: "HND Computer Science", designation: "Technologist I", specialization: "Hardware Maintenance" },
+  { name: "Mr. I.O.I. Akinwale", designation: "Assistant Chief Technologist" },
+  { name: "Mr. I.S. Abioye", designation: "Principal Technical Officer" },
 ];
 
 const adminStaff = [
-  { name: "Mrs. O. P. Bakare", qualification: "B.A Public Administration", designation: "Administrative Officer", specialization: "Office Management" },
-  { name: "Mr. Q. R. Sanni", qualification: "B.Sc Accounting", designation: "Accountant II", specialization: "Financial Records" },
-  { name: "Ms. S. T. Uche", qualification: "OND Secretarial Studies", designation: "Secretary", specialization: "Correspondence" },
+  { name: "Mr. J.A. Ayoade", designation: "Chief Personal Secretary" },
+  { name: "Mr. R.E. Abuya", designation: "High Executive Officer" },
+  { name: "Mr. J.O. Omigbire", designation: "High Transport Officer" },
+  { name: "Mr. O.A. Daodu", designation: "Supervisor (Office)" },
 ];
 
 const DeanProfile = () => (
@@ -204,7 +224,7 @@ const DeanProfile = () => (
 );
 
 const FacultyStaff = () => {
-  const renderStaffTable = (staffList: typeof academicStaff) => (
+  const renderAcademicStaffTable = (staffList: typeof academicStaff) => (
     <div className="glass-card p-6 rounded-2xl overflow-x-auto">
       <Table>
         <TableHeader>
@@ -223,13 +243,42 @@ const FacultyStaff = () => {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.05 }}
               whileHover={{ backgroundColor: "hsl(42 92% 56% / 0.05)" }}
             >
               <TableCell className="font-medium">{staff.name}</TableCell>
               <TableCell>{staff.qualification}</TableCell>
               <TableCell>{staff.designation}</TableCell>
               <TableCell>{staff.specialization}</TableCell>
+            </motion.tr>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+
+  const renderSimpleStaffTable = (staffList: typeof technicalStaff) => (
+    <div className="glass-card p-6 rounded-2xl overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Designation</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {staffList.map((staff, index) => (
+            <motion.tr
+              key={staff.name}
+              className="border-b transition-colors hover:bg-muted/50"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ backgroundColor: "hsl(42 92% 56% / 0.05)" }}
+            >
+              <TableCell className="font-medium">{staff.name}</TableCell>
+              <TableCell>{staff.designation}</TableCell>
             </motion.tr>
           ))}
         </TableBody>
@@ -247,15 +296,15 @@ const FacultyStaff = () => {
         </TabsList>
 
         <TabsContent value="academic" className="mt-6">
-          {renderStaffTable(academicStaff)}
+          {renderAcademicStaffTable(academicStaff)}
         </TabsContent>
 
         <TabsContent value="technical" className="mt-6">
-          {renderStaffTable(technicalStaff)}
+          {renderSimpleStaffTable(technicalStaff)}
         </TabsContent>
 
         <TabsContent value="admin" className="mt-6">
-          {renderStaffTable(adminStaff)}
+          {renderSimpleStaffTable(adminStaff)}
         </TabsContent>
       </Tabs>
     </FadeIn>
