@@ -39,8 +39,8 @@ const departments = [{
   color: "from-teal-500 to-green-400"
 }, {
   id: "software",
-  name: "Software Technology",
-  shortName: "Software Tech",
+  name: "Software Engineering",
+  shortName: "Software Eng",
   icon: Code,
   image: deptSoftware,
   description: "Building the software systems that power modern society",
