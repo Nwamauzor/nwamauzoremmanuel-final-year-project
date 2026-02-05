@@ -2,6 +2,7 @@ import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { FloatingOrbs, AnimatedSeparator, CornerAccent } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn } from "@/components/animations/PageTransition";
+ import uiLogo from "@/assets/ui-logo-original.png";
 
 const historyContent = [
   {
@@ -53,7 +54,7 @@ const History = () => {
             <motion.img
               alt="UI Logo"
               className="w-24 h-24 object-contain mb-6"
-              src="/lovable-uploads/cf23c246-01cc-4cba-802f-6f65ffa20f33.png"
+               src={uiLogo}
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 100, delay: 0.2 }}
