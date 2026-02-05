@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import uiLogo from "@/assets/ui-logo.png";
+ import uiLogo from "@/assets/ui-logo-original.png";
 interface NavItem {
   label: string;
   href: string;
@@ -92,7 +92,7 @@ const Navbar = () => {
           }} transition={{
             type: "spring",
             stiffness: 300
-          }} src="/lovable-uploads/deb05b77-aee7-4244-ba95-6c32f1086eb6.png" />
+           }} src={uiLogo} />
             <div className="hidden sm:block">
               <h1 className="font-display font-bold text-lg text-foreground leading-tight">
                 Faculty of Computing

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, ExternalLink, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
-import uiLogo from "@/assets/ui-logo.png";
+ import uiLogo from "@/assets/ui-logo-original.png";
 const Footer = () => {
   const quickLinks = [{
     label: "Home",
@@ -67,7 +67,7 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-6">
-              <img alt="UI Logo" className="h-16 w-16 object-contain" src="/lovable-uploads/7dd629c2-9512-4a4f-864b-a00e70de110e.png" />
+               <img alt="UI Logo" className="h-16 w-16 object-contain" src={uiLogo} />
               <div>
                 <h3 className="font-display font-bold text-lg text-white">
                   Faculty of Computing
