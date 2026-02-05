@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Home, Handshake, Users, GraduationCap, Award, Briefcase } from "lucide-react";
 import { FloatingOrbs, AnimatedCard, AnimatedSeparator } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/animations/PageTransition";
+ import BackButton from "@/components/layout/BackButton";
 
 const AlumniHome = () => (
   <StaggerContainer className="space-y-8">
@@ -284,6 +285,7 @@ const Alumni = () => {
       {/* Content */}
       <section className="py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
+           <BackButton />
           {renderContent()}
         </div>
       </section>

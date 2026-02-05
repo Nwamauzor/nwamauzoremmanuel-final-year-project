@@ -39,6 +39,7 @@ export interface DepartmentData {
   hodName: string;
   hodQualification: string;
   hodBio: string;
+   hodPhoto?: string;
   welcomeMessage: string;
   history: string;
 }

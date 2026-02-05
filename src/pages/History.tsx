@@ -3,36 +3,37 @@ import { motion } from "framer-motion";
 import { FloatingOrbs, AnimatedSeparator, CornerAccent } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn } from "@/components/animations/PageTransition";
  import uiLogo from "@/assets/ui-logo-original.png";
+ import BackButton from "@/components/layout/BackButton";
 
 const historyContent = [
   {
     title: "The Beginning",
-    content: "The Faculty of Computing at the University of Ibadan represents a significant milestone in the advancement of computing education in Nigeria. Established to address the growing demand for skilled computing professionals in the country and beyond, the faculty has grown to become one of the premier institutions for computing education in West Africa.",
+     content: "The Faculty of Computing at the University of Ibadan represents a significant milestone in the advancement of computing education in Nigeria. Established on March 24th, 2025, following approval by the University Senate, the faculty was created to address the growing demand for skilled computing professionals in the country and beyond.",
     year: "Foundation",
   },
   {
     title: "Early Development",
-    content: "Computing education at the University of Ibadan has its roots in the early adoption of computer technology in Nigerian universities. What began as a small department within the Faculty of Science has evolved into a full-fledged faculty with multiple specialized departments, each focusing on different aspects of computing and information technology.",
+     content: "Computing education at the University of Ibadan has deep roots in the early adoption of computer technology in Nigerian universities. The B.Sc. Computer Science programme has been offered at UI for decades, building a strong foundation of excellence that evolved into this full-fledged Faculty of Computing.",
     year: "Growth",
   },
   {
     title: "Expansion and Growth",
-    content: "Over the years, the faculty has expanded its academic programs to include undergraduate, postgraduate, and doctoral programs across four specialized departments: Computer Science and Artificial Intelligence, Data Science, Information and Communication Technology, and Software Technology. This expansion reflects the evolving landscape of the computing industry and the need for specialized skills in various domains.",
+     content: "The faculty offers five undergraduate programmes across four specialized departments: Computer Science (Dept. of CS & AI), Data Science, Cybersecurity, ICT (Dept. of ICT), and Software Engineering. This structure reflects the evolving landscape of the computing industry.",
     year: "Expansion",
   },
   {
     title: "Research and Innovation",
-    content: "The Faculty of Computing has established itself as a center for research excellence, with faculty members and students contributing to groundbreaking research in areas such as artificial intelligence, machine learning, cybersecurity, data analytics, and software engineering. The faculty maintains strong partnerships with industry leaders and international academic institutions.",
+     content: "The Faculty of Computing has established itself as a center for research excellence. Faculty members and students contribute to groundbreaking research in artificial intelligence, machine learning, cybersecurity, data analytics, and software engineering.",
     year: "Innovation",
   },
   {
     title: "Present Day",
-    content: "Today, the Faculty of Computing stands as a beacon of excellence in computing education, producing graduates who are making significant contributions to the technology sector both in Nigeria and internationally. With state-of-the-art facilities, a distinguished faculty, and a comprehensive curriculum, the faculty continues to shape the future of computing in Africa and beyond.",
+     content: "Under the leadership of Dean Prof. A. B. Adeyemo, the Faculty of Computing stands as a beacon of excellence in computing education. Our graduates make significant contributions to the technology sector in Nigeria and internationally.",
     year: "Today",
   },
   {
     title: "Vision for the Future",
-    content: "Looking ahead, the Faculty of Computing is committed to remaining at the forefront of computing education and research. With plans to expand programs, enhance research capabilities, and strengthen industry partnerships, the faculty aims to continue producing world-class graduates who will drive technological innovation and development in Nigeria and across the globe.",
+     content: "Looking ahead, we are committed to remaining at the forefront of computing education and research. Our vision encompasses expanding postgraduate programmes, enhancing research capabilities, and strengthening industry partnerships.",
     year: "Future",
   },
 ];
@@ -82,6 +83,8 @@ const History = () => {
       {/* History Content - Timeline Style */}
       <section className="py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
+           <BackButton />
+ 
           <div className="max-w-4xl mx-auto relative">
             {/* Vertical timeline line */}
             <motion.div

@@ -24,6 +24,7 @@ import deanPhoto from "@/assets/dean-photo.jpg";
 import { useState } from "react";
 import { FloatingOrbs, AnimatedCard } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/animations/PageTransition";
+ import BackButton from "@/components/layout/BackButton";
 
 const academicStaff = [
   // CS & AI Department Staff
@@ -569,6 +570,7 @@ const DeansOffice = () => {
       {/* Content */}
       <section className="py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
+           <BackButton />
           {renderContent()}
         </div>
       </section>
