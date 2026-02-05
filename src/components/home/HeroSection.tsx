@@ -122,8 +122,8 @@ const HeroSection = () => {
               value: "4",
               label: "Departments"
             }, {
-              value: "50+",
-              label: "Faculty"
+               value: "5",
+               label: "Programmes"
             }, {
               value: "2000+",
               label: "Students"

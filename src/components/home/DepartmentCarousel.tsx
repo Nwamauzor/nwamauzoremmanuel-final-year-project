@@ -33,8 +33,8 @@ const departments = [
   },
   {
     id: "software",
-    name: "Software Technology",
-    shortName: "Software Tech",
+     name: "Software Engineering",
+     shortName: "Software Eng",
     description: "Building the software systems that power modern society",
     image: deptSoftware,
     href: "/departments/software",

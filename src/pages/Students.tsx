@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/tabs";
 import { FloatingOrbs, AnimatedCard } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/animations/PageTransition";
+ import BackButton from "@/components/layout/BackButton";
 
 // Demo lecture timetable
 const lectureSchedule = [
@@ -64,7 +65,7 @@ const Admission = () => (
             </FadeIn>
             <FadeIn delay={0.1}>
               <p className="text-muted-foreground leading-relaxed">
-                The Faculty of Computing offers undergraduate programs leading to the award of Bachelor of Science (B.Sc.) degrees in Computer Science, Data Science, Information & Communication Technology, and Software Technology.
+                 The Faculty of Computing offers undergraduate programs leading to the award of Bachelor of Science (B.Sc.) degrees in Computer Science, Data Science, Cybersecurity, Information & Communication Technology, and Software Engineering.
               </p>
             </FadeIn>
             <FadeIn delay={0.2}>
@@ -541,6 +542,7 @@ const Students = () => {
       {/* Content */}
       <section className="py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
+           <BackButton />
           {renderContent()}
         </div>
       </section>

@@ -3,6 +3,7 @@ import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Cpu, Database, Wifi, Code } from "lucide-react";
+ import BackButton from "@/components/layout/BackButton";
 import deptCsAi from "@/assets/dept-cs-ai.jpg";
 import deptDataScience from "@/assets/dept-data-science.jpg";
 import deptIct from "@/assets/dept-ict.jpg";
@@ -10,6 +11,9 @@ import deptSoftware from "@/assets/dept-software.jpg";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import hodPhoto from "@/assets/hod-photo.jpg";
+ import hodDataScience from "@/assets/hod-data-science.jpg";
+ import hodIct from "@/assets/hod-ict.jpg";
+ import hodSoftware from "@/assets/hod-software.jpg";
 import { departmentDataMap, type DepartmentData } from "@/data/departmentData";
 import { useState } from "react";
 
@@ -19,6 +23,7 @@ const departments = [{
   shortName: "CS & AI",
   icon: Cpu,
   image: deptCsAi,
+   hodImage: hodPhoto,
   description: "Pioneering research and education in computing and machine intelligence",
   color: "from-blue-500 to-cyan-400"
 }, {
@@ -27,6 +32,7 @@ const departments = [{
   shortName: "Data Science",
   icon: Database,
   image: deptDataScience,
+   hodImage: hodDataScience,
   description: "Transforming data into actionable insights and knowledge",
   color: "from-purple-500 to-blue-400"
 }, {
@@ -35,14 +41,16 @@ const departments = [{
   shortName: "ICT",
   icon: Wifi,
   image: deptIct,
+   hodImage: hodIct,
   description: "Connecting the world through innovative technology solutions",
   color: "from-teal-500 to-green-400"
 }, {
   id: "software",
-  name: "Software Engineering",
+   name: "Department of Software Engineering",
   shortName: "Software Eng",
   icon: Code,
   image: deptSoftware,
+   hodImage: hodSoftware,
   description: "Building the software systems that power modern society",
   color: "from-orange-500 to-yellow-400"
 }];
@@ -64,6 +72,9 @@ const DepartmentDetail = ({
 
   return (
     <div className="space-y-12">
+       {/* Back Button */}
+       <BackButton />
+ 
       {/* Department Hero */}
       <section className="relative h-80 rounded-2xl overflow-hidden">
         <img src={dept.image} alt={dept.name} className="absolute inset-0 w-full h-full object-cover" />
@@ -117,7 +128,7 @@ const DepartmentDetail = ({
             <h2 className="font-display text-2xl font-bold text-foreground mb-4">Head of Department</h2>
             <div className="flex flex-col md:flex-row gap-6">
               <img 
-                src={hodPhoto} 
+                 src={dept.hodImage} 
                 alt={deptData.hodName}
                 className="w-32 h-32 rounded-xl object-cover"
               />

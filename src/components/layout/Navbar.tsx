@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
+ import { Menu, X, ChevronDown, Moon, Sun, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
  import uiLogo from "@/assets/ui-logo-original.png";
+ import GlobalSearch from "./GlobalSearch";
 interface NavItem {
   label: string;
   href: string;
@@ -31,7 +32,7 @@ const navItems: NavItem[] = [{
     label: "ICT",
     href: "/departments/ict"
   }, {
-    label: "Software Technology",
+     label: "Software Engineering",
     href: "/departments/software"
   }]
 }, {
@@ -77,12 +78,15 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
+   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     document.documentElement.classList.toggle("dark");
   };
-  return <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
+   return <>
+     <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
       <nav className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -134,14 +138,40 @@ const Navbar = () => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2">
-            <div className="relative group">
-              <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full">
-                {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+             {/* Search Button */}
+             <Button
+               variant="ghost"
+               size="icon"
+               onClick={() => setSearchOpen(true)}
+               className="rounded-full"
+             >
+               <Search className="h-5 w-5" />
+             </Button>
+ 
+             {/* Dark Mode Toggle with Label */}
+             <motion.div 
+               className="relative group flex items-center gap-2"
+               whileHover={{ scale: 1.02 }}
+             >
+               <Button 
+                 variant="outline" 
+                 size="sm" 
+                 onClick={toggleDarkMode} 
+                 className="rounded-full px-3 gap-2 border-primary/30 bg-primary/5 hover:bg-primary/10"
+               >
+                 {darkMode ? (
+                   <>
+                     <Sun className="h-4 w-4 text-primary" />
+                     <span className="text-xs font-medium hidden sm:inline">Light</span>
+                   </>
+                 ) : (
+                   <>
+                     <Moon className="h-4 w-4 text-primary" />
+                     <span className="text-xs font-medium hidden sm:inline">Dark</span>
+                   </>
+                 )}
               </Button>
-              <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-border">
-                {darkMode ? "Light Mode" : "Dark Mode"}
-              </span>
-            </div>
+             </motion.div>
 
             {/* Mobile menu button */}
             <Button variant="ghost" size="icon" className="lg:hidden rounded-full" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -178,6 +208,7 @@ const Navbar = () => {
             </motion.div>}
         </AnimatePresence>
       </nav>
-    </header>;
+     </header>
+   </>;
 };
 export default Navbar;

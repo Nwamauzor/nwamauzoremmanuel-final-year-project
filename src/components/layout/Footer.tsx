@@ -45,19 +45,19 @@ const Footer = () => {
   }];
   const socialLinks = [{
     icon: Facebook,
-    href: "#",
+     href: "https://www.facebook.com/UNIIbadan/",
     label: "Facebook"
   }, {
     icon: Twitter,
-    href: "#",
+     href: "https://x.com/Unibadan",
     label: "Twitter"
   }, {
     icon: Instagram,
-    href: "#",
+     href: "https://www.instagram.com/universityofibadan/",
     label: "Instagram"
   }, {
     icon: Linkedin,
-    href: "#",
+     href: "https://www.linkedin.com/school/university-of-ibadan/",
     label: "LinkedIn"
   }];
   return <footer className="bg-gradient-dark text-secondary-foreground">

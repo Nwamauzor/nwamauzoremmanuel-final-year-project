@@ -1,11 +1,12 @@
-import { motion } from "framer-motion";
-import { Cpu, Database, Wifi, Code } from "lucide-react";
+ import { motion } from "framer-motion";
+ import { Link } from "react-router-dom";
+ import { Cpu, Database, Wifi, Code } from "lucide-react";
 
 const departments = [
-  { name: "Computer Science & AI", abbr: "CS-AI", icon: Cpu },
-  { name: "Data Science", abbr: "DS", icon: Database },
-  { name: "ICT", abbr: "ICT", icon: Wifi },
-  { name: "Software Technology", abbr: "ST", icon: Code },
+   { name: "Computer Science & AI", abbr: "CS-AI", icon: Cpu, path: "/departments/cs-ai" },
+   { name: "Data Science", abbr: "DS", icon: Database, path: "/departments/data-science" },
+   { name: "ICT", abbr: "ICT", icon: Wifi, path: "/departments/ict" },
+   { name: "Software Engineering", abbr: "SEN", icon: Code, path: "/departments/software" },
 ];
 
 const StarGraphic = () => {
@@ -27,7 +28,7 @@ const StarGraphic = () => {
 
       {/* Central circle */}
       <motion.div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-gradient-sky shadow-glow flex items-center justify-center z-10"
+         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 rounded-full bg-gradient-sky shadow-glow flex items-center justify-center z-10"
         animate={{
           boxShadow: [
             "0 0 30px -5px hsl(199 89% 48% / 0.4)",
@@ -41,9 +42,9 @@ const StarGraphic = () => {
           ease: "easeInOut",
         }}
       >
-        <div className="text-center text-white">
-          <p className="text-xs font-medium opacity-80">Faculty of</p>
-          <p className="text-lg font-display font-bold">Computing</p>
+         <div className="text-center text-white px-2">
+           <p className="text-sm font-medium opacity-90">Faculty of</p>
+           <p className="text-xl font-display font-bold tracking-wide">Computing</p>
         </div>
       </motion.div>
 
@@ -72,29 +73,30 @@ const StarGraphic = () => {
             }}
           >
             {/* Connection line */}
-            <svg
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 -z-10"
-              style={{
-                transform: `translate(-50%, -50%) rotate(${index * 90 + 45}deg)`,
-              }}
-            >
-              <motion.line
-                x1="80"
-                y1="80"
-                x2="40"
-                y2="80"
-                stroke="hsl(199 89% 48% / 0.3)"
-                strokeWidth="2"
-                strokeDasharray="4 4"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-              />
-            </svg>
+           <svg
+             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 -z-10"
+             style={{
+               transform: `translate(-50%, -50%) rotate(${index * 90 + 45}deg)`,
+             }}
+           >
+             <motion.line
+               x1="80"
+               y1="80"
+               x2="40"
+               y2="80"
+               stroke="hsl(199 89% 48% / 0.3)"
+               strokeWidth="2"
+               strokeDasharray="4 4"
+               initial={{ pathLength: 0 }}
+               animate={{ pathLength: 1 }}
+               transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
+             />
+           </svg>
 
             {/* Node */}
+           <Link to={dept.path}>
             <motion.div
-              className="w-full h-full rounded-xl bg-card shadow-soft border border-border/50 flex flex-col items-center justify-center gap-1 cursor-pointer"
+               className="w-full h-full rounded-xl bg-card shadow-soft border border-border/50 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary/50"
               whileHover={{
                 scale: 1.1,
                 boxShadow: "0 0 30px -5px hsl(199 89% 48% / 0.4)",
@@ -104,6 +106,7 @@ const StarGraphic = () => {
               <dept.icon className="w-6 h-6 text-primary" />
               <span className="text-xs font-semibold text-foreground">{dept.abbr}</span>
             </motion.div>
+           </Link>
           </motion.div>
         );
       })}
