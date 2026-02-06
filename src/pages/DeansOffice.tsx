@@ -21,10 +21,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import deanPhoto from "@/assets/dean-photo.jpg";
+import campusView from "@/assets/campus-view.jpg";
 import { useState } from "react";
-import { FloatingOrbs, AnimatedCard } from "@/components/animations/DecorativeElements";
+import { AnimatedCard } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/animations/PageTransition";
- import BackButton from "@/components/layout/BackButton";
+import BackButton from "@/components/layout/BackButton";
 
 const academicStaff = [
   // CS & AI Department Staff
@@ -509,10 +510,19 @@ const DeansOffice = () => {
 
   return (
     <Layout>
-      {/* Hero Banner */}
-      <section className="relative py-24 lg:py-32 bg-gradient-sky overflow-hidden">
-        <FloatingOrbs />
-        <div className="absolute inset-0 circuit-bg opacity-10" />
+      {/* Hero Banner with Image Background */}
+      <section className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src={campusView} 
+            alt="Faculty of Computing Campus" 
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-secondary/80 via-secondary/70 to-secondary/90" />
+        </div>
+        
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -520,7 +530,7 @@ const DeansOffice = () => {
             className="text-center"
           >
             <motion.h1
-              className="font-display text-4xl lg:text-5xl font-bold text-white mb-4"
+              className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -528,7 +538,7 @@ const DeansOffice = () => {
               Dean's Office
             </motion.h1>
             <motion.p
-              className="text-lg text-white/80 max-w-2xl mx-auto"
+              className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto px-4"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -552,14 +562,15 @@ const DeansOffice = () => {
               >
                 <Link
                   to={`/deans-office/${page.id}`}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
                     currentSubpage === page.id
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
                 >
                   <page.icon className="w-4 h-4" />
-                  {page.label}
+                  <span className="hidden sm:inline">{page.label}</span>
+                  <span className="sm:hidden">{page.id === "faculty-officer" ? "Officer" : page.label.split(" ")[0]}</span>
                 </Link>
               </motion.div>
             ))}
@@ -568,9 +579,9 @@ const DeansOffice = () => {
       </section>
 
       {/* Content */}
-      <section className="py-16 lg:py-24 bg-background">
+      <section className="py-12 sm:py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-           <BackButton />
+          <BackButton />
           {renderContent()}
         </div>
       </section>
