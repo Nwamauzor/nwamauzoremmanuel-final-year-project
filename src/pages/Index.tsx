@@ -38,26 +38,26 @@ const Index = () => {
       <WelcomeSection />
 
       {/* Features Section */}
-      <section className="py-16 lg:py-24 bg-background">
+      <section className="py-12 sm:py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto mb-12"
+            className="text-center max-w-2xl mx-auto mb-8 sm:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+            <span className="inline-block px-3 sm:px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-4">
               Why Choose Us
             </span>
-            <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Excellence in Computing Education
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm sm:text-base">
               Discover what makes the Faculty of Computing your ideal destination for academic and professional growth.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -67,14 +67,14 @@ const Index = () => {
                 transition={{ delay: index * 0.1 }}
                 className="group"
               >
-                <div className="h-full p-6 rounded-2xl bg-card border border-border shadow-soft hover:shadow-elevated hover:border-primary/30 transition-all duration-300">
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                    <feature.icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
+                <div className="h-full p-4 sm:p-6 rounded-2xl bg-card border border-border shadow-soft hover:shadow-elevated hover:border-primary/30 transition-all duration-300">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                    <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary group-hover:text-primary-foreground transition-colors" />
                   </div>
-                  <h3 className="font-display text-lg font-semibold text-foreground mb-2">
+                  <h3 className="font-display text-base sm:text-lg font-semibold text-foreground mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -88,7 +88,7 @@ const Index = () => {
       <DepartmentCarousel />
 
       {/* Call to Action */}
-      <section className="py-16 lg:py-24 bg-gradient-sky relative overflow-hidden">
+      <section className="py-12 sm:py-16 lg:py-24 bg-gradient-sky relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 circuit-bg" />
         </div>
@@ -100,23 +100,23 @@ const Index = () => {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h2 className="font-display text-3xl lg:text-4xl font-bold text-white mb-6">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6">
               Ready to Shape Your Future in Computing?
             </h2>
-            <p className="text-lg text-white/80 mb-8">
+            <p className="text-base sm:text-lg text-white/80 mb-6 sm:mb-8 px-4">
               Join thousands of students who have launched successful careers through our world-class programs. 
               Applications are now open for the next academic session.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <a
                 href="/students/admission"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all text-sm sm:text-base"
               >
                 Apply for Admission
               </a>
               <a
                 href="/deans-office"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white font-semibold rounded-xl border border-white/20 hover:bg-white/20 transition-all"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white/10 text-white font-semibold rounded-xl border border-white/20 hover:bg-white/20 transition-all text-sm sm:text-base"
               >
                 Contact Us
               </a>

@@ -17,9 +17,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { FloatingOrbs, AnimatedCard } from "@/components/animations/DecorativeElements";
+import { AnimatedCard } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/animations/PageTransition";
- import BackButton from "@/components/layout/BackButton";
+import BackButton from "@/components/layout/BackButton";
+import campusBuildings from "@/assets/campus-buildings.jpg";
 
 // Demo lecture timetable
 const lectureSchedule = [
@@ -49,29 +50,29 @@ const Admission = () => (
     <StaggerItem>
       <Tabs defaultValue="undergraduate">
         <TabsList className="grid w-full grid-cols-2 h-auto p-1 bg-muted">
-          <TabsTrigger value="undergraduate" className="py-2">Undergraduate</TabsTrigger>
-          <TabsTrigger value="postgraduate" className="py-2">Postgraduate</TabsTrigger>
+          <TabsTrigger value="undergraduate" className="py-2 text-xs sm:text-sm">Undergraduate</TabsTrigger>
+          <TabsTrigger value="postgraduate" className="py-2 text-xs sm:text-sm">Postgraduate</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="undergraduate" className="mt-6">
+        <TabsContent value="undergraduate" className="mt-4 sm:mt-6">
           <motion.div
-            className="glass-card p-8 rounded-2xl space-y-6"
+            className="glass-card p-4 sm:p-8 rounded-2xl space-y-4 sm:space-y-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
             <FadeIn>
-              <h2 className="font-display text-2xl font-bold text-foreground">Undergraduate Admission</h2>
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">Undergraduate Admission</h2>
             </FadeIn>
             <FadeIn delay={0.1}>
-              <p className="text-muted-foreground leading-relaxed">
-                 The Faculty of Computing offers undergraduate programs leading to the award of Bachelor of Science (B.Sc.) degrees in Computer Science, Data Science, Cybersecurity, Information & Communication Technology, and Software Engineering.
+              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
+                The Faculty of Computing offers undergraduate programs leading to the award of Bachelor of Science (B.Sc.) degrees in Computer Science, Data Science, Cybersecurity, Information & Communication Technology, and Software Engineering.
               </p>
             </FadeIn>
             <FadeIn delay={0.2}>
               <div className="space-y-4">
-                <h3 className="font-display text-lg font-semibold text-foreground">Requirements</h3>
-                <ul className="space-y-2 text-muted-foreground">
+                <h3 className="font-display text-base sm:text-lg font-semibold text-foreground">Requirements</h3>
+                <ul className="space-y-2 text-muted-foreground text-sm sm:text-base">
                   {[
                     "Five O'Level credits including Mathematics and English Language",
                     "UTME score meeting the current cut-off mark",
@@ -96,7 +97,7 @@ const Admission = () => (
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Button asChild className="bg-primary hover:bg-primary-dark">
+              <Button asChild className="bg-primary hover:bg-primary-dark text-sm sm:text-base">
                 <a href="https://admissions.ui.edu.ng" target="_blank" rel="noopener noreferrer">
                   Apply via UI Portal
                   <ExternalLink className="w-4 h-4 ml-2" />
@@ -106,20 +107,20 @@ const Admission = () => (
           </motion.div>
         </TabsContent>
 
-        <TabsContent value="postgraduate" className="mt-6">
+        <TabsContent value="postgraduate" className="mt-4 sm:mt-6">
           <motion.div
-            className="glass-card p-8 rounded-2xl space-y-6"
+            className="glass-card p-4 sm:p-8 rounded-2xl space-y-4 sm:space-y-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <h2 className="font-display text-2xl font-bold text-foreground">Postgraduate Admission</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">Postgraduate Admission</h2>
+            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
               The faculty offers M.Sc., M.Phil., and Ph.D. programs in various computing disciplines. Our postgraduate programs are designed to produce researchers and professionals equipped for leadership roles.
             </p>
             <div className="space-y-4">
-              <h3 className="font-display text-lg font-semibold text-foreground">Programs Available</h3>
-              <ul className="space-y-2 text-muted-foreground">
+              <h3 className="font-display text-base sm:text-lg font-semibold text-foreground">Programs Available</h3>
+              <ul className="space-y-2 text-muted-foreground text-sm sm:text-base">
                 {[
                   "M.Sc. Computer Science",
                   "M.Sc. Data Science",
@@ -141,7 +142,7 @@ const Admission = () => (
               </ul>
             </div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button asChild className="bg-primary hover:bg-primary-dark">
+              <Button asChild className="bg-primary hover:bg-primary-dark text-sm sm:text-base">
                 <a href="https://spgs.ui.edu.ng" target="_blank" rel="noopener noreferrer">
                   Apply via SPGS Portal
                   <ExternalLink className="w-4 h-4 ml-2" />
@@ -158,51 +159,53 @@ const Admission = () => (
 const Activities = () => (
   <StaggerContainer className="space-y-8">
     <StaggerItem>
-      <div className="glass-card p-8 rounded-2xl">
+      <div className="glass-card p-4 sm:p-8 rounded-2xl">
         <FadeIn>
-          <h2 className="font-display text-2xl font-bold text-foreground mb-6">Lecture Timetable (Sample)</h2>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Lecture Timetable (Sample)</h2>
         </FadeIn>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Day</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Course</TableHead>
-                <TableHead>Venue</TableHead>
-                <TableHead>Lecturer</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {lectureSchedule.map((item, index) => (
-                <motion.tr
-                  key={index}
-                  className="border-b transition-colors hover:bg-muted/50"
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ backgroundColor: "hsl(42 92% 56% / 0.05)" }}
-                >
-                  <TableCell className="font-medium">{item.day}</TableCell>
-                  <TableCell>{item.time}</TableCell>
-                  <TableCell>{item.course}</TableCell>
-                  <TableCell>{item.venue}</TableCell>
-                  <TableCell>{item.lecturer}</TableCell>
-                </motion.tr>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
+          <div className="min-w-[600px] sm:min-w-0 px-4 sm:px-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-xs sm:text-sm">Day</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Time</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Course</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Venue</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Lecturer</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {lectureSchedule.map((item, index) => (
+                  <motion.tr
+                    key={index}
+                    className="border-b transition-colors hover:bg-muted/50"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.05 }}
+                    whileHover={{ backgroundColor: "hsl(42 92% 56% / 0.05)" }}
+                  >
+                    <TableCell className="font-medium text-xs sm:text-sm">{item.day}</TableCell>
+                    <TableCell className="text-xs sm:text-sm">{item.time}</TableCell>
+                    <TableCell className="text-xs sm:text-sm">{item.course}</TableCell>
+                    <TableCell className="text-xs sm:text-sm">{item.venue}</TableCell>
+                    <TableCell className="text-xs sm:text-sm">{item.lecturer}</TableCell>
+                  </motion.tr>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </StaggerItem>
 
     <StaggerItem>
-      <div className="glass-card p-8 rounded-2xl">
+      <div className="glass-card p-4 sm:p-8 rounded-2xl">
         <FadeIn>
-          <h2 className="font-display text-2xl font-bold text-foreground mb-6">Sessional Calendar</h2>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Sessional Calendar</h2>
         </FadeIn>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {sessionalCalendar.map((month, monthIndex) => (
             <motion.div
               key={month.month}
@@ -216,12 +219,12 @@ const Activities = () => (
                 boxShadow: "0 10px 25px -10px hsl(42 92% 56% / 0.2)",
               }}
             >
-              <h3 className="font-display font-semibold text-foreground mb-3">{month.month}</h3>
+              <h3 className="font-display font-semibold text-foreground mb-3 text-sm sm:text-base">{month.month}</h3>
               <ul className="space-y-1">
                 {month.events.map((event, index) => (
                   <motion.li
                     key={index}
-                    className="text-sm text-muted-foreground flex items-start gap-2"
+                    className="text-xs sm:text-sm text-muted-foreground flex items-start gap-2"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
@@ -246,10 +249,10 @@ const Activities = () => (
 
 const Registration = () => (
   <ScaleIn>
-    <div className="glass-card p-8 rounded-2xl text-center">
+    <div className="glass-card p-6 sm:p-8 rounded-2xl text-center">
       <div className="max-w-md mx-auto">
         <motion.div
-          className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 sm:mb-6"
           animate={{ 
             scale: [1, 1.1, 1],
             boxShadow: [
@@ -260,13 +263,13 @@ const Registration = () => (
           }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <ClipboardCheck className="w-10 h-10 text-primary" />
+          <ClipboardCheck className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
         </motion.div>
         <FadeIn>
-          <h2 className="font-display text-2xl font-bold text-foreground mb-4">Course Registration</h2>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4">Course Registration</h2>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-6 text-sm sm:text-base">
             Course registration is done through the University of Ibadan Student Portal. Please ensure you have completed your fee payment before proceeding with registration.
           </p>
         </FadeIn>
@@ -285,9 +288,9 @@ const Registration = () => (
 
 const ConductDiscipline = () => (
   <FadeIn>
-    <div className="glass-card p-8 rounded-2xl">
-      <h2 className="font-display text-2xl font-bold text-foreground mb-6">Rules and Regulations</h2>
-      <StaggerContainer className="space-y-6 text-muted-foreground" staggerDelay={0.1}>
+    <div className="glass-card p-4 sm:p-8 rounded-2xl">
+      <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Rules and Regulations</h2>
+      <StaggerContainer className="space-y-4 sm:space-y-6 text-muted-foreground" staggerDelay={0.1}>
         {[
           {
             title: "Academic Integrity",
@@ -315,18 +318,18 @@ const ConductDiscipline = () => (
               "Follow all university-wide regulations",
             ],
           },
-        ].map((section, sectionIndex) => (
+        ].map((section) => (
           <StaggerItem key={section.title}>
             <motion.div
               whileHover={{ x: 5 }}
               transition={{ duration: 0.2 }}
             >
-              <h3 className="font-display text-lg font-semibold text-foreground mb-3">{section.title}</h3>
+              <h3 className="font-display text-base sm:text-lg font-semibold text-foreground mb-2 sm:mb-3">{section.title}</h3>
               {section.content && (
-                <p className="leading-relaxed">{section.content}</p>
+                <p className="leading-relaxed text-sm sm:text-base">{section.content}</p>
               )}
               {section.items && (
-                <ul className="space-y-2">
+                <ul className="space-y-2 text-sm sm:text-base">
                   {section.items.map((item, index) => (
                     <motion.li
                       key={index}
@@ -369,81 +372,85 @@ const degreeClasses = [
 const Grading = () => (
   <StaggerContainer className="space-y-8">
     <StaggerItem>
-      <div className="glass-card p-8 rounded-2xl">
+      <div className="glass-card p-4 sm:p-8 rounded-2xl">
         <FadeIn>
-          <h2 className="font-display text-2xl font-bold text-foreground mb-6">Grading of Courses</h2>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Grading of Courses</h2>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
             The grading system used by the Faculty of Computing follows the University of Ibadan's standard grading policy.
           </p>
         </FadeIn>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Letter Grade</TableHead>
-                <TableHead>Grade Point</TableHead>
-                <TableHead>Mark (%)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {letterGrades.map((item, index) => (
-                <motion.tr
-                  key={item.grade}
-                  className="border-b transition-colors hover:bg-muted/50"
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ backgroundColor: "hsl(42 92% 56% / 0.05)" }}
-                >
-                  <TableCell className="font-semibold text-primary">{item.grade}</TableCell>
-                  <TableCell>{item.point}</TableCell>
-                  <TableCell>{item.mark}</TableCell>
-                </motion.tr>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
+          <div className="min-w-[400px] sm:min-w-0 px-4 sm:px-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-xs sm:text-sm">Letter Grade</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Grade Point</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Mark (%)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {letterGrades.map((item, index) => (
+                  <motion.tr
+                    key={item.grade}
+                    className="border-b transition-colors hover:bg-muted/50"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ backgroundColor: "hsl(42 92% 56% / 0.05)" }}
+                  >
+                    <TableCell className="font-semibold text-primary text-sm sm:text-base">{item.grade}</TableCell>
+                    <TableCell className="text-sm sm:text-base">{item.point}</TableCell>
+                    <TableCell className="text-sm sm:text-base">{item.mark}</TableCell>
+                  </motion.tr>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </StaggerItem>
 
     <StaggerItem>
-      <div className="glass-card p-8 rounded-2xl">
+      <div className="glass-card p-4 sm:p-8 rounded-2xl">
         <FadeIn>
-          <h2 className="font-display text-2xl font-bold text-foreground mb-6">Class of Degree</h2>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Class of Degree</h2>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
             The class of degree awarded is based on the Cumulative Grade Point Average (CGPA) at graduation.
           </p>
         </FadeIn>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cumulative Grade Point Average (CGPA)</TableHead>
-                <TableHead>Class of Degree</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {degreeClasses.map((item, index) => (
-                <motion.tr
-                  key={item.cgpa}
-                  className="border-b transition-colors hover:bg-muted/50"
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ backgroundColor: "hsl(42 92% 56% / 0.05)" }}
-                >
-                  <TableCell className="font-medium">{item.cgpa}</TableCell>
-                  <TableCell className="font-semibold text-primary">{item.classification}</TableCell>
-                </motion.tr>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
+          <div className="min-w-[300px] sm:min-w-0 px-4 sm:px-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-xs sm:text-sm">CGPA</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Classification</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {degreeClasses.map((item, index) => (
+                  <motion.tr
+                    key={item.cgpa}
+                    className="border-b transition-colors hover:bg-muted/50"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ backgroundColor: "hsl(42 92% 56% / 0.05)" }}
+                  >
+                    <TableCell className="font-medium text-sm sm:text-base">{item.cgpa}</TableCell>
+                    <TableCell className="text-sm sm:text-base">{item.classification}</TableCell>
+                  </motion.tr>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </StaggerItem>
@@ -454,8 +461,8 @@ const subpages = [
   { id: "admission", label: "Admission", icon: GraduationCap },
   { id: "activities", label: "Activities", icon: Calendar },
   { id: "registration", label: "Registration", icon: ClipboardCheck },
-  { id: "grading", label: "Grading of Courses", icon: BookOpen },
-  { id: "conduct", label: "Conduct & Discipline", icon: Shield },
+  { id: "grading", label: "Grading", icon: BookOpen },
+  { id: "conduct", label: "Conduct", icon: Shield },
 ];
 
 const Students = () => {
@@ -481,10 +488,19 @@ const Students = () => {
 
   return (
     <Layout>
-      {/* Hero Banner */}
-      <section className="relative py-24 lg:py-32 bg-gradient-sky overflow-hidden">
-        <FloatingOrbs />
-        <div className="absolute inset-0 circuit-bg opacity-10" />
+      {/* Hero Banner with Image Background */}
+      <section className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src={campusBuildings} 
+            alt="Faculty of Computing Campus" 
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-secondary/80 via-secondary/70 to-secondary/90" />
+        </div>
+        
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -492,7 +508,7 @@ const Students = () => {
             className="text-center"
           >
             <motion.h1
-              className="font-display text-4xl lg:text-5xl font-bold text-white mb-4"
+              className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -500,12 +516,12 @@ const Students = () => {
               Students
             </motion.h1>
             <motion.p
-              className="text-lg text-white/80 max-w-2xl mx-auto"
+              className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto px-4"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              Everything you need for your academic journey at the Faculty of Computing
+              Resources and information for current and prospective students
             </motion.p>
           </motion.div>
         </div>
@@ -524,7 +540,7 @@ const Students = () => {
               >
                 <Link
                   to={`/students/${page.id}`}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
                     currentSubpage === page.id
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -540,9 +556,9 @@ const Students = () => {
       </section>
 
       {/* Content */}
-      <section className="py-16 lg:py-24 bg-background">
+      <section className="py-12 sm:py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-           <BackButton />
+          <BackButton />
           {renderContent()}
         </div>
       </section>

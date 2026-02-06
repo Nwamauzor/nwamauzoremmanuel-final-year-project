@@ -2,24 +2,25 @@ import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Home, Handshake, Users, GraduationCap, Award, Briefcase } from "lucide-react";
-import { FloatingOrbs, AnimatedCard, AnimatedSeparator } from "@/components/animations/DecorativeElements";
+import { AnimatedCard } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/animations/PageTransition";
- import BackButton from "@/components/layout/BackButton";
+import BackButton from "@/components/layout/BackButton";
+import campusSignpost from "@/assets/campus-signpost.jpg";
 
 const AlumniHome = () => (
   <StaggerContainer className="space-y-8">
     <StaggerItem>
-      <div className="glass-card p-8 rounded-2xl relative overflow-hidden">
+      <div className="glass-card p-4 sm:p-8 rounded-2xl relative overflow-hidden">
         <FadeIn direction="left">
-          <h2 className="font-display text-2xl font-bold text-foreground mb-4">Welcome to Alumni Network</h2>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4">Welcome to Alumni Network</h2>
         </FadeIn>
         <FadeIn direction="up" delay={0.1}>
-          <p className="text-muted-foreground leading-relaxed mb-6">
+          <p className="text-muted-foreground leading-relaxed mb-6 text-sm sm:text-base">
             The Faculty of Computing Alumni Association connects graduates from all our programs, providing networking opportunities, career support, and ways to give back to the faculty. Our alumni are making significant contributions in technology, academia, business, and public service across Nigeria and around the world.
           </p>
         </FadeIn>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           {[
             { icon: Users, value: "5,000+", label: "Registered Alumni" },
             { icon: GraduationCap, value: "30+", label: "Years of Excellence" },
@@ -27,7 +28,7 @@ const AlumniHome = () => (
           ].map((stat, index) => (
             <ScaleIn key={stat.label} delay={0.2 + index * 0.1}>
               <motion.div
-                className="p-6 bg-muted rounded-xl text-center"
+                className="p-4 sm:p-6 bg-muted rounded-xl text-center"
                 whileHover={{ 
                   y: -5, 
                   boxShadow: "0 15px 30px -10px hsl(42 92% 56% / 0.2)",
@@ -35,13 +36,13 @@ const AlumniHome = () => (
                 transition={{ duration: 0.2 }}
               >
                 <motion.div
-                  className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                 >
-                  <stat.icon className="w-6 h-6 text-primary" />
+                  <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </motion.div>
                 <motion.p
-                  className="font-display text-2xl font-bold text-foreground"
+                  className="font-display text-xl sm:text-2xl font-bold text-foreground"
                   initial={{ opacity: 0, scale: 0.5 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
@@ -49,7 +50,7 @@ const AlumniHome = () => (
                 >
                   {stat.value}
                 </motion.p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">{stat.label}</p>
               </motion.div>
             </ScaleIn>
           ))}
@@ -57,9 +58,9 @@ const AlumniHome = () => (
       </div>
     </StaggerItem>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <AnimatedCard delay={0.3} className="glass-card p-6 rounded-2xl">
-        <h3 className="font-display text-lg font-semibold text-foreground mb-4">Notable Alumni</h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <AnimatedCard delay={0.3} className="glass-card p-4 sm:p-6 rounded-2xl">
+        <h3 className="font-display text-base sm:text-lg font-semibold text-foreground mb-4">Notable Alumni</h3>
         <div className="space-y-4">
           {[
             { name: "Dr. Adaeze Nwosu", role: "CTO, Tech Nigeria" },
@@ -68,7 +69,7 @@ const AlumniHome = () => (
           ].map((alumni, index) => (
             <motion.div
               key={alumni.name}
-              className="flex items-center gap-4"
+              className="flex items-center gap-3 sm:gap-4"
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -76,23 +77,23 @@ const AlumniHome = () => (
               whileHover={{ x: 5 }}
             >
               <motion.div
-                className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center"
                 whileHover={{ scale: 1.1, backgroundColor: "hsl(42 92% 56% / 0.2)" }}
               >
-                <Award className="w-6 h-6 text-primary" />
+                <Award className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </motion.div>
               <div>
-                <p className="font-medium text-foreground">{alumni.name}</p>
-                <p className="text-sm text-muted-foreground">{alumni.role}</p>
+                <p className="font-medium text-foreground text-sm sm:text-base">{alumni.name}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">{alumni.role}</p>
               </div>
             </motion.div>
           ))}
         </div>
       </AnimatedCard>
 
-      <AnimatedCard delay={0.4} className="glass-card p-6 rounded-2xl">
-        <h3 className="font-display text-lg font-semibold text-foreground mb-4">Upcoming Events</h3>
-        <div className="space-y-4">
+      <AnimatedCard delay={0.4} className="glass-card p-4 sm:p-6 rounded-2xl">
+        <h3 className="font-display text-base sm:text-lg font-semibold text-foreground mb-4">Upcoming Events</h3>
+        <div className="space-y-3 sm:space-y-4">
           {[
             { event: "Annual Alumni Dinner", date: "December 15, 2024" },
             { event: "Career Mentorship Program", date: "January 10, 2025" },
@@ -100,7 +101,7 @@ const AlumniHome = () => (
           ].map((item, index) => (
             <motion.div
               key={item.event}
-              className="flex justify-between items-center p-3 bg-muted rounded-lg"
+              className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3 bg-muted rounded-lg gap-1 sm:gap-0"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -110,8 +111,8 @@ const AlumniHome = () => (
                 backgroundColor: "hsl(42 92% 56% / 0.1)",
               }}
             >
-              <span className="font-medium text-foreground">{item.event}</span>
-              <span className="text-sm text-muted-foreground">{item.date}</span>
+              <span className="font-medium text-foreground text-sm sm:text-base">{item.event}</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{item.date}</span>
             </motion.div>
           ))}
         </div>
@@ -123,12 +124,12 @@ const AlumniHome = () => (
 const AlumniServices = () => (
   <StaggerContainer className="space-y-8">
     <StaggerItem>
-      <div className="glass-card p-8 rounded-2xl">
+      <div className="glass-card p-4 sm:p-8 rounded-2xl">
         <FadeIn>
-          <h2 className="font-display text-2xl font-bold text-foreground mb-6">Services Rendered in Alumni Relation Office</h2>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Services Rendered in Alumni Relation Office</h2>
         </FadeIn>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {[
             {
               title: "Transcript Services",
@@ -157,7 +158,7 @@ const AlumniServices = () => (
           ].map((service, index) => (
             <motion.div
               key={service.title}
-              className="p-6 bg-muted rounded-xl"
+              className="p-4 sm:p-6 bg-muted rounded-xl"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -168,12 +169,12 @@ const AlumniServices = () => (
               }}
             >
               <motion.h3
-                className="font-display text-lg font-semibold text-foreground mb-2"
+                className="font-display text-base sm:text-lg font-semibold text-foreground mb-2"
                 whileHover={{ color: "hsl(42 92% 56%)" }}
               >
                 {service.title}
               </motion.h3>
-              <p className="text-muted-foreground text-sm">{service.description}</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">{service.description}</p>
             </motion.div>
           ))}
         </div>
@@ -181,9 +182,9 @@ const AlumniServices = () => (
     </StaggerItem>
 
     <FadeIn delay={0.3}>
-      <div className="glass-card p-8 rounded-2xl">
-        <h3 className="font-display text-xl font-bold text-foreground mb-4">Contact Alumni Office</h3>
-        <div className="space-y-3 text-muted-foreground">
+      <div className="glass-card p-4 sm:p-8 rounded-2xl">
+        <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-4">Contact Alumni Office</h3>
+        <div className="space-y-2 sm:space-y-3 text-muted-foreground text-sm sm:text-base">
           <motion.p whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>
             <strong className="text-foreground">Email:</strong> alumni.computing@ui.edu.ng
           </motion.p>
@@ -224,10 +225,19 @@ const Alumni = () => {
 
   return (
     <Layout>
-      {/* Hero Banner */}
-      <section className="relative py-24 lg:py-32 bg-gradient-sky overflow-hidden">
-        <FloatingOrbs />
-        <div className="absolute inset-0 circuit-bg opacity-10" />
+      {/* Hero Banner with Image Background */}
+      <section className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src={campusSignpost} 
+            alt="Faculty of Computing Campus" 
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-secondary/80 via-secondary/70 to-secondary/90" />
+        </div>
+        
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -235,7 +245,7 @@ const Alumni = () => {
             className="text-center"
           >
             <motion.h1
-              className="font-display text-4xl lg:text-5xl font-bold text-white mb-4"
+              className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -243,7 +253,7 @@ const Alumni = () => {
               Alumni
             </motion.h1>
             <motion.p
-              className="text-lg text-white/80 max-w-2xl mx-auto"
+              className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto px-4"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -267,7 +277,7 @@ const Alumni = () => {
               >
                 <Link
                   to={`/alumni/${page.id}`}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 sm:py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                     currentSubpage === page.id
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -283,9 +293,9 @@ const Alumni = () => {
       </section>
 
       {/* Content */}
-      <section className="py-16 lg:py-24 bg-background">
+      <section className="py-12 sm:py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-           <BackButton />
+          <BackButton />
           {renderContent()}
         </div>
       </section>
