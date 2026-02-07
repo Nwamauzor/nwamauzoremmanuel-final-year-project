@@ -128,8 +128,8 @@ const DeanProfile = () => (
             <FadeIn delay={0.3}>
               <div className="space-y-4 text-muted-foreground">
                 {[
-                  { label: "Qualification", value: "Ph.D Computer Science (University of Manchester, UK)" },
-                  { label: "Specialization", value: "Artificial Intelligence, Machine Learning, Data Science" },
+                  { label: "Qualification", value: "B.Sc. Engineering Physics (Ife), PGD, M.Tech., PhD Computer Science (Akure)" },
+                  { label: "Specialization", value: "Data Mining, Mobile and Internet Computing" },
                   { label: "Email", value: "ab.adeyemo@ui.edu.ng" },
                 ].map((info, index) => (
                   <motion.p
@@ -150,7 +150,7 @@ const DeanProfile = () => (
               <div>
                 <h3 className="font-display text-lg font-semibold text-foreground mb-2">Biography</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Prof. A. B. Adeyemo is a distinguished academic with over 25 years of experience in computer science education and research. He obtained his Ph.D from the University of Manchester, UK, and has held various academic and administrative positions at the University of Ibadan.
+                  Prof. A. B. Adeyemo is a distinguished academic with over 25 years of experience in computer science education and research. He obtained his PhD from the Federal University of Technology, Akure, and has held various academic and administrative positions at the University of Ibadan.
                 </p>
               </div>
             </FadeIn>
@@ -485,7 +485,6 @@ const Journals = () => {
 
 const subpages = [
   { id: "dean", label: "Dean's Profile", icon: User },
-  { id: "faculty-officer", label: "Faculty Officer", icon: User },
   { id: "staff", label: "Faculty Staff", icon: Users },
   { id: "journals", label: "Journals", icon: BookOpen },
 ];
@@ -497,7 +496,6 @@ const DeansOffice = () => {
   const renderContent = () => {
     switch (currentSubpage) {
       case "dean":
-      case "faculty-officer":
         return <DeanProfile />;
       case "staff":
         return <FacultyStaff />;
