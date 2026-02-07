@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, ExternalLink, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
- import uiLogo from "@/assets/ui-logo-original.png";
+import uiLogo from "@/assets/ui-logo-original.png";
+import campusBuildings from "@/assets/campus-buildings.jpg";
 const Footer = () => {
   const quickLinks = [{
     label: "Home",
@@ -60,9 +61,14 @@ const Footer = () => {
      href: "https://www.linkedin.com/school/university-of-ibadan/",
     label: "LinkedIn"
   }];
-  return <footer className="bg-gradient-dark text-secondary-foreground">
+  return <footer className="relative text-secondary-foreground">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img src={campusBuildings} alt="" className="w-full h-full object-cover" loading="lazy" />
+        <div className="absolute inset-0 bg-secondary/90" />
+      </div>
       {/* Main Footer */}
-      <div className="container mx-auto px-4 lg:px-8 py-16">
+      <div className="container mx-auto px-4 lg:px-8 py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
@@ -146,7 +152,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/10 relative z-10">
         <div className="container mx-auto px-4 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-white/50 text-center md:text-left">
