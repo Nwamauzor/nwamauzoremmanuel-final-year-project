@@ -1,55 +1,9 @@
- import { useState, useEffect, useRef } from "react";
- import { useNavigate } from "react-router-dom";
- import { motion, AnimatePresence } from "framer-motion";
- import { Search, X, FileText, Users, Building, GraduationCap, BookOpen } from "lucide-react";
- import { Input } from "@/components/ui/input";
- 
- interface SearchResult {
-   title: string;
-   description: string;
-   path: string;
-   category: string;
-   icon: typeof FileText;
- }
- 
- const searchableContent: SearchResult[] = [
-   // Main pages
-   { title: "Home", description: "Faculty of Computing homepage", path: "/", category: "Pages", icon: FileText },
-   { title: "History", description: "History of Computing at UI", path: "/history", category: "Pages", icon: BookOpen },
-   { title: "Departments", description: "All departments overview", path: "/departments", category: "Pages", icon: Building },
-   { title: "Dean's Office", description: "Dean's office information", path: "/deans-office", category: "Pages", icon: Users },
-   { title: "Students", description: "Student information and resources", path: "/students", category: "Pages", icon: GraduationCap },
-   { title: "Alumni", description: "Alumni network and resources", path: "/alumni", category: "Pages", icon: Users },
-   
-   // Departments
-   { title: "Computer Science & AI", description: "Department of Computer Science and Artificial Intelligence", path: "/departments/cs-ai", category: "Departments", icon: Building },
-   { title: "Data Science", description: "Department of Data Science", path: "/departments/data-science", category: "Departments", icon: Building },
-   { title: "ICT", description: "Department of Information & Communication Technology", path: "/departments/ict", category: "Departments", icon: Building },
-   { title: "Software Engineering", description: "Department of Software Engineering", path: "/departments/software", category: "Departments", icon: Building },
-   
-   // Dean's Office subpages
-   { title: "Dean's Profile", description: "Profile of the Dean", path: "/deans-office/dean", category: "Dean's Office", icon: Users },
-   { title: "Faculty Officer", description: "Faculty Officer information", path: "/deans-office/faculty-officer", category: "Dean's Office", icon: Users },
-   { title: "Faculty Staff", description: "All faculty staff directory", path: "/deans-office/staff", category: "Dean's Office", icon: Users },
-   { title: "Journals", description: "Faculty journals and publications", path: "/deans-office/journals", category: "Dean's Office", icon: BookOpen },
-   
-   // Student subpages
-   { title: "Admission", description: "Admission requirements and process", path: "/students/admission", category: "Students", icon: GraduationCap },
-   { title: "Activities", description: "Student activities and events", path: "/students/activities", category: "Students", icon: GraduationCap },
-   { title: "Registration", description: "Course registration information", path: "/students/registration", category: "Students", icon: GraduationCap },
-   { title: "Grading", description: "Grading of courses", path: "/students/grading", category: "Students", icon: GraduationCap },
-   { title: "Conduct & Discipline", description: "Student conduct and discipline", path: "/students/conduct", category: "Students", icon: GraduationCap },
-   
-   // Keywords
-   { title: "Courses", description: "View course offerings for all departments", path: "/departments", category: "Academic", icon: BookOpen },
-   { title: "SIWES", description: "Student Industrial Work Experience Scheme", path: "/students", category: "Academic", icon: GraduationCap },
-   { title: "HOD", description: "Head of Department profiles", path: "/departments", category: "Staff", icon: Users },
-   { title: "Prof. A. B. Adeyemo", description: "Dean of Faculty of Computing", path: "/deans-office/dean", category: "Staff", icon: Users },
-   { title: "Dr. Adebola K. Ojo", description: "HOD Data Science", path: "/departments/data-science", category: "Staff", icon: Users },
-   { title: "Prof. O. Osunade", description: "HOD ICT", path: "/departments/ict", category: "Staff", icon: Users },
-   { title: "Dr. Ibiyinka T. Ayorinde", description: "HOD Software Engineering", path: "/departments/software", category: "Staff", icon: Users },
- ];
- 
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { searchableContent, SearchResult } from "@/data/searchableContent";
  interface GlobalSearchProps {
    isOpen: boolean;
    onClose: () => void;
@@ -73,14 +27,15 @@
        return;
      }
  
-     const searchQuery = query.toLowerCase();
-     const filtered = searchableContent.filter(
-       item =>
-         item.title.toLowerCase().includes(searchQuery) ||
-         item.description.toLowerCase().includes(searchQuery) ||
-         item.category.toLowerCase().includes(searchQuery)
-     );
-     setResults(filtered);
+    const searchQuery = query.toLowerCase();
+    const filtered = searchableContent.filter(
+      item =>
+        item.title.toLowerCase().includes(searchQuery) ||
+        item.description.toLowerCase().includes(searchQuery) ||
+        item.category.toLowerCase().includes(searchQuery) ||
+        item.keywords.some(kw => kw.toLowerCase().includes(searchQuery))
+    );
+    setResults(filtered);
    }, [query]);
  
    const handleSelect = (path: string) => {
