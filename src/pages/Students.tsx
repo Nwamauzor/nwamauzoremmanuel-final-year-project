@@ -286,70 +286,87 @@ const Registration = () => (
   </ScaleIn>
 );
 
-const ConductDiscipline = () => (
-  <FadeIn>
-    <div className="glass-card p-4 sm:p-8 rounded-2xl">
-      <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Rules and Regulations</h2>
-      <StaggerContainer className="space-y-4 sm:space-y-6 text-muted-foreground" staggerDelay={0.1}>
-        {[
-          {
-            title: "Academic Integrity",
-            content: "Students are expected to maintain the highest standards of academic integrity. Plagiarism, cheating, and other forms of academic dishonesty are strictly prohibited and will result in disciplinary action.",
-          },
-          {
-            title: "Attendance Policy",
-            content: "Regular attendance at lectures, tutorials, and laboratory sessions is mandatory. A minimum of 75% attendance is required to be eligible for examinations. Chronic absenteeism may lead to debarment from examinations.",
-          },
-          {
-            title: "Laboratory Rules",
-            items: [
-              "No food or drinks in the computer laboratories",
-              "Proper handling of equipment is expected",
-              "Installation of unauthorized software is prohibited",
-              "Report any equipment malfunction immediately",
-            ],
-          },
-          {
-            title: "General Conduct",
-            items: [
-              "Maintain decorum in all faculty premises",
-              "Dress appropriately for academic activities",
-              "Respect staff, fellow students, and visitors",
-              "Follow all university-wide regulations",
-            ],
-          },
-        ].map((section) => (
-          <StaggerItem key={section.title}>
-            <motion.div
-              whileHover={{ x: 5 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h3 className="font-display text-base sm:text-lg font-semibold text-foreground mb-2 sm:mb-3">{section.title}</h3>
-              {section.content && (
-                <p className="leading-relaxed text-sm sm:text-base">{section.content}</p>
-              )}
-              {section.items && (
-                <ul className="space-y-2 text-sm sm:text-base">
-                  {section.items.map((item, index) => (
-                    <motion.li
-                      key={index}
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.2 + index * 0.1 }}
-                    >
-                      • {item}
-                    </motion.li>
-                  ))}
-                </ul>
-              )}
-            </motion.div>
-          </StaggerItem>
-        ))}
-      </StaggerContainer>
-    </div>
-  </FadeIn>
-);
+const ConductDiscipline = () => {
+  const misconducts = [
+    "All examination misconducts (See regulations on examinations)",
+    "Unruly behaviour",
+    "Indecent behaviour",
+    "Vandalism",
+    "Indecent dressing",
+    "Miscellaneous Hall offences",
+    "Unauthorized use/displacement/damage to University property Pilfering",
+    "Insubordination",
+    "Direct sale of bed spaces/squatting in Halls of Residence",
+    "Illegal participation in the National Youth Service programme",
+    "Infringements of other University regulations",
+  ];
+
+  const criminalOffences = [
+    "Burglary",
+    "Physical assaults on or fighting with fellow students",
+    "Fraud",
+    "Theft",
+    "Membership of a secret cult inside or outside the campus Possession of fire arms",
+    "Murder",
+    "Arson",
+    "Rape",
+    "Possession and/or use of hard Drug and Drug trafficking",
+    "Other criminal offences",
+  ];
+
+  return (
+    <FadeIn>
+      <div className="glass-card p-4 sm:p-8 rounded-2xl space-y-6 sm:space-y-8">
+        <div>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
+            Student General Conducts and Discipline
+          </h2>
+          <p className="text-muted-foreground leading-relaxed text-sm sm:text-base mb-6">
+            All students are expected to comport themselves in a good manner in the Department. Students are to refrain from the following misconducts while in the University:
+          </p>
+
+          <StaggerContainer className="space-y-2 text-muted-foreground" staggerDelay={0.05}>
+            {misconducts.map((item, index) => (
+              <StaggerItem key={index}>
+                <motion.div className="flex items-start gap-3 text-sm sm:text-base" whileHover={{ x: 5 }}>
+                  <span className="text-primary font-semibold min-w-[24px]">{String.fromCharCode(105 + index)})</span>
+                  <span>{item}</span>
+                </motion.div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+
+        <div>
+          <p className="text-muted-foreground leading-relaxed text-sm sm:text-base mb-4">
+            In addition, students must also refrain from the following criminal offences:
+          </p>
+          <StaggerContainer className="space-y-2 text-muted-foreground" staggerDelay={0.05}>
+            {criminalOffences.map((item, index) => (
+              <StaggerItem key={index}>
+                <motion.div className="flex items-start gap-3 text-sm sm:text-base" whileHover={{ x: 5 }}>
+                  <span className="text-primary font-semibold min-w-[24px]">{String.fromCharCode(105 + index)})</span>
+                  <span>{item}</span>
+                </motion.div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+
+        <motion.div
+          className="p-4 sm:p-6 bg-destructive/10 border border-destructive/20 rounded-xl"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <p className="text-sm sm:text-base text-foreground font-medium">
+            ⚠️ Students caught carrying out any of these offences or misconducts will be sent to the Student Disciplinary Committee without any hesitation for appropriate sanction(s).
+          </p>
+        </motion.div>
+      </div>
+    </FadeIn>
+  );
+};
 
 // Grading data
 const letterGrades = [
