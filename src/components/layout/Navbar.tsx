@@ -42,9 +42,6 @@ const navItems: NavItem[] = [{
     label: "Dean's Profile",
     href: "/deans-office/dean"
   }, {
-    label: "Faculty Officer",
-    href: "/deans-office/faculty-officer"
-  }, {
     label: "Faculty Staff",
     href: "/deans-office/staff"
   }, {
