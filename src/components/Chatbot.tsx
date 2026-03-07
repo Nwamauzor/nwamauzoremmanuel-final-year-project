@@ -136,7 +136,7 @@ const Chatbot = () => {
             <GraduationCap className="w-5 h-5" />
             <span className="font-semibold text-sm">AI Assistant</span>
             <motion.span
-              className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-green-500 border-2 border-primary"
+              className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-accent border-2 border-primary"
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
@@ -162,7 +162,7 @@ const Chatbot = () => {
                 <div>
                   <h3 className="font-display font-bold text-sm">🤖 AI Academic Assistant</h3>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                     <p className="text-xs opacity-90">Online • Ask me anything</p>
                   </div>
                 </div>
