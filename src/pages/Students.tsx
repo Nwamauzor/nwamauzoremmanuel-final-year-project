@@ -314,6 +314,11 @@ const ConductDiscipline = () => {
     "Other criminal offences",
   ];
 
+  const toRoman = (num: number): string => {
+    const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv'];
+    return romanNumerals[num] || String(num + 1);
+  };
+
   return (
     <FadeIn>
       <div className="glass-card p-4 sm:p-8 rounded-2xl space-y-6 sm:space-y-8">
@@ -329,7 +334,7 @@ const ConductDiscipline = () => {
             {misconducts.map((item, index) => (
               <StaggerItem key={index}>
                 <motion.div className="flex items-start gap-3 text-sm sm:text-base" whileHover={{ x: 5 }}>
-                  <span className="text-primary font-semibold min-w-[24px]">{String.fromCharCode(105 + index)})</span>
+                  <span className="text-primary font-semibold min-w-[32px]">{toRoman(index)})</span>
                   <span>{item}</span>
                 </motion.div>
               </StaggerItem>
@@ -345,7 +350,7 @@ const ConductDiscipline = () => {
             {criminalOffences.map((item, index) => (
               <StaggerItem key={index}>
                 <motion.div className="flex items-start gap-3 text-sm sm:text-base" whileHover={{ x: 5 }}>
-                  <span className="text-primary font-semibold min-w-[24px]">{String.fromCharCode(105 + index)})</span>
+                  <span className="text-primary font-semibold min-w-[32px]">{toRoman(index)})</span>
                   <span>{item}</span>
                 </motion.div>
               </StaggerItem>
