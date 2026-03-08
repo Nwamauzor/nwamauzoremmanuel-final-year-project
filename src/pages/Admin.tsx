@@ -143,7 +143,7 @@ const Admin = () => {
   };
 
   const deleteItem = async (table: string, id: string) => {
-    const { error } = await supabase.from(table).delete().eq("id", id);
+    const { error } = await (supabase.from as any)(table).delete().eq("id", id);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else {
       if (table === "admin_staff") loadStaff();
@@ -155,7 +155,7 @@ const Admin = () => {
 
   const saveEdit = async (table: string) => {
     if (!editingId) return;
-    const { error } = await supabase.from(table).update(editData).eq("id", editingId);
+    const { error } = await (supabase.from as any)(table).update(editData).eq("id", editingId);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else {
       setEditingId(null);

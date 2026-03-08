@@ -10,6 +10,7 @@ import DeansOffice from "./pages/DeansOffice";
 import Students from "./pages/Students";
 import Alumni from "./pages/Alumni";
 import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/students/:subpage" element={<Students />} />
           <Route path="/alumni" element={<Alumni />} />
           <Route path="/alumni/:subpage" element={<Alumni />} />
+          <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
