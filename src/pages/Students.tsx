@@ -22,15 +22,22 @@ import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/ani
 import BackButton from "@/components/layout/BackButton";
 import campusBuildings from "@/assets/campus-buildings.jpg";
 
-// Demo lecture timetable
+// Realistic lecture timetable based on actual department courses
 const lectureSchedule = [
-  { day: "Monday", time: "8:00 - 10:00", course: "CSC 301", venue: "LT1", lecturer: "Dr. Okonkwo" },
-  { day: "Monday", time: "10:00 - 12:00", course: "CSC 305", venue: "LT2", lecturer: "Prof. Adeyemo" },
-  { day: "Tuesday", time: "8:00 - 10:00", course: "CSC 303", venue: "Lab A", lecturer: "Dr. Eze" },
-  { day: "Tuesday", time: "14:00 - 16:00", course: "CSC 307", venue: "LT1", lecturer: "Dr. Ibrahim" },
-  { day: "Wednesday", time: "10:00 - 12:00", course: "CSC 309", venue: "LT3", lecturer: "Prof. Adeyemo" },
-  { day: "Thursday", time: "8:00 - 10:00", course: "CSC 301", venue: "Lab B", lecturer: "Dr. Okonkwo" },
-  { day: "Friday", time: "12:00 - 14:00", course: "CSC 311", venue: "LT2", lecturer: "Dr. Eze" },
+  { day: "Monday", time: "8:00 - 10:00", course: "C-CSC 301 (Data Structures)", venue: "Faculty Hall 1", lecturer: "Prof. O.F.W Onifade" },
+  { day: "Monday", time: "10:00 - 12:00", course: "C-DTS 304 (Data Management I)", venue: "Faculty Hall 2", lecturer: "Dr. Adebola K. Ojo" },
+  { day: "Monday", time: "14:00 - 16:00", course: "C-ICT 305 (Data Comm & Network)", venue: "ICT Lab", lecturer: "Prof. O. Osunade" },
+  { day: "Tuesday", time: "8:00 - 10:00", course: "C-CSC 309 (Artificial Intelligence)", venue: "Faculty Hall 1", lecturer: "Prof. Fausat B. Oladejo" },
+  { day: "Tuesday", time: "10:00 - 12:00", course: "C-SEN 201 (Intro to Software Eng.)", venue: "Faculty Hall 3", lecturer: "Prof. S.O. Akinola" },
+  { day: "Tuesday", time: "14:00 - 16:00", course: "C-CSC 308 (Operating Systems)", venue: "CS Lab A", lecturer: "Dr. Nancy C. Woods" },
+  { day: "Wednesday", time: "8:00 - 10:00", course: "C-COS 201 (Computer Programming I)", venue: "Faculty Hall 1", lecturer: "Prof. B.O. Akinkunmi" },
+  { day: "Wednesday", time: "10:00 - 12:00", course: "UI-CSC 572 (Machine Learning)", venue: "Faculty Hall 2", lecturer: "Khadijat Ladoja" },
+  { day: "Wednesday", time: "14:00 - 16:00", course: "C-IFT 212 (Computer Architecture)", venue: "ICT Lab", lecturer: "Dr. O.D. Adeniji" },
+  { day: "Thursday", time: "8:00 - 10:00", course: "C-DTS 201 (Intro to Data Science)", venue: "Faculty Hall 2", lecturer: "Dr. Aderonke B. Sakpere" },
+  { day: "Thursday", time: "10:00 - 12:00", course: "C-CYB 201 (Intro to Cybersecurity)", venue: "Faculty Hall 1", lecturer: "Dr. B.I. Ayinla" },
+  { day: "Thursday", time: "14:00 - 16:00", course: "C-IFT 302 (Web App Development)", venue: "Software Lab", lecturer: "Dr. Ibiyinka T. Ayorinde" },
+  { day: "Friday", time: "8:00 - 10:00", course: "C-CSC 401 (Algorithms & Complexity)", venue: "Faculty Hall 1", lecturer: "Prof. O.F.W Onifade" },
+  { day: "Friday", time: "10:00 - 12:00", course: "C-DTS 302 (Big Data Computing)", venue: "Faculty Hall 3", lecturer: "Dr. Angela U. Makolo" },
 ];
 
 // Demo sessional calendar
