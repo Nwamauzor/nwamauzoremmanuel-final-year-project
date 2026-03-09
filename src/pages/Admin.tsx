@@ -13,8 +13,11 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar } from "lucide-react";
+import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { lovable } from "@/integrations/lovable/index";
 
@@ -24,7 +27,11 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [accessCode, setAccessCode] = useState("");
+  const [showAccessCode, setShowAccessCode] = useState(false);
+  const [verifyingCode, setVerifyingCode] = useState(false);
   const { toast } = useToast();
 
   // Data states
@@ -33,6 +40,7 @@ const Admin = () => {
   const [timetable, setTimetable] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>({});
+  const [deleteDialog, setDeleteDialog] = useState<{ table: string; id: string; name: string } | null>(null);
 
   // New item forms
   const [newStaff, setNewStaff] = useState({ name: "", qualification: "", designation: "", specialization: "", department: "", staff_type: "academic" });
@@ -123,6 +131,31 @@ const Admin = () => {
     setIsAdmin(false);
   };
 
+  const verifyAccessCode = async () => {
+    setVerifyingCode(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-setup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ access_code: accessCode }),
+      });
+      const result = await resp.json();
+      if (resp.ok && result.success) {
+        toast({ title: "✅ Admin Access Granted", description: "You now have full admin privileges." });
+        setIsAdmin(true);
+      } else {
+        toast({ title: "Access Denied", description: result.error || "Invalid access code", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Failed to verify code", variant: "destructive" });
+    }
+    setVerifyingCode(false);
+  };
+
   // CRUD operations
   const addStaff = async () => {
     const { error } = await supabase.from("admin_staff").insert(newStaff);
@@ -142,15 +175,17 @@ const Admin = () => {
     else { loadTimetable(); setNewTimetable({ day: "Monday", time_slot: "", course_code: "", venue: "", lecturer: "", department: "" }); setShowNewForm(null); toast({ title: "Timetable entry added" }); }
   };
 
-  const deleteItem = async (table: string, id: string) => {
-    const { error } = await (supabase.from as any)(table).delete().eq("id", id);
+  const confirmDelete = async () => {
+    if (!deleteDialog) return;
+    const { error } = await (supabase.from as any)(deleteDialog.table).delete().eq("id", deleteDialog.id);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else {
-      if (table === "admin_staff") loadStaff();
-      if (table === "admin_courses") loadCourses();
-      if (table === "admin_timetable") loadTimetable();
-      toast({ title: "Deleted" });
+      if (deleteDialog.table === "admin_staff") loadStaff();
+      if (deleteDialog.table === "admin_courses") loadCourses();
+      if (deleteDialog.table === "admin_timetable") loadTimetable();
+      toast({ title: "Deleted successfully" });
     }
+    setDeleteDialog(null);
   };
 
   const saveEdit = async (table: string) => {
@@ -184,7 +219,7 @@ const Admin = () => {
             <motion.div className="glass-card p-8 rounded-2xl" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="flex items-center gap-3 mb-6">
                 <Shield className="w-8 h-8 text-primary" />
-                <h1 className="font-display text-2xl font-bold text-foreground">Admin Login</h1>
+                <h1 className="font-display text-2xl font-bold text-foreground">Admin Portal</h1>
               </div>
               <form onSubmit={handleAuth} className="space-y-4">
                 <div>
@@ -193,7 +228,12 @@ const Admin = () => {
                 </div>
                 <div>
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="mt-1" required />
+                  <div className="relative mt-1">
+                    <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full">{authMode === "login" ? "Login" : "Register"}</Button>
                 <Button type="button" variant="outline" className="w-full" onClick={handleGoogleSignIn}>
@@ -212,7 +252,7 @@ const Admin = () => {
                   {authMode === "login" ? "Register" : "Login"}
                 </button>
               </p>
-              <p className="text-xs text-muted-foreground text-center mt-4">⚠️ Admin access is restricted to authorized faculty members only.</p>
+              <p className="text-xs text-muted-foreground text-center mt-4">🔒 This portal is restricted to authorized administrators only.</p>
             </motion.div>
           </div>
         </section>
@@ -226,10 +266,29 @@ const Admin = () => {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4 max-w-md text-center">
             <motion.div className="glass-card p-8 rounded-2xl" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <Shield className="w-16 h-16 text-destructive mx-auto mb-4" />
-              <h1 className="font-display text-2xl font-bold text-foreground mb-2">Access Denied</h1>
-              <p className="text-muted-foreground mb-6">You don't have admin privileges. Contact the faculty administrator to request access.</p>
-              <Button onClick={handleLogout} variant="outline"><LogOut className="w-4 h-4 mr-2" />Logout</Button>
+              <KeyRound className="w-16 h-16 text-primary mx-auto mb-4" />
+              <h1 className="font-display text-2xl font-bold text-foreground mb-2">Admin Verification</h1>
+              <p className="text-muted-foreground mb-6 text-sm">Enter your unique admin access code to unlock the dashboard.</p>
+              <div className="space-y-4">
+                <div className="relative">
+                  <Input
+                    type={showAccessCode ? "text" : "password"}
+                    value={accessCode}
+                    onChange={(e) => setAccessCode(e.target.value)}
+                    placeholder="Enter admin access code"
+                    className="text-center tracking-widest font-mono"
+                  />
+                  <button type="button" onClick={() => setShowAccessCode(!showAccessCode)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    {showAccessCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                <Button onClick={verifyAccessCode} disabled={!accessCode.trim() || verifyingCode} className="w-full">
+                  <Shield className="w-4 h-4 mr-2" />{verifyingCode ? "Verifying..." : "Verify & Unlock"}
+                </Button>
+                <Button onClick={handleLogout} variant="outline" className="w-full">
+                  <LogOut className="w-4 h-4 mr-2" />Sign Out
+                </Button>
+              </div>
             </motion.div>
           </div>
         </section>
@@ -244,7 +303,7 @@ const Admin = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
             <div>
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">Admin Dashboard</h1>
-              <p className="text-muted-foreground text-sm">Manage faculty content</p>
+              <p className="text-muted-foreground text-sm">Manage faculty content • Logged in as {user?.email}</p>
             </div>
             <Button onClick={handleLogout} variant="outline" size="sm">
               <LogOut className="w-4 h-4 mr-2" />Logout
@@ -327,7 +386,7 @@ const Admin = () => {
                               ) : (
                                 <>
                                   <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => { setEditingId(s.id); setEditData(s); }}><Edit2 className="w-3 h-3" /></Button>
-                                  <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => deleteItem("admin_staff", s.id)}><Trash2 className="w-3 h-3" /></Button>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => setDeleteDialog({ table: "admin_staff", id: s.id, name: s.name })}><Trash2 className="w-3 h-3" /></Button>
                                 </>
                               )}
                             </div>
@@ -353,15 +412,15 @@ const Admin = () => {
 
                 {showNewForm === "courses" && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="border border-border rounded-lg p-4 mb-4 space-y-3">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      <Input placeholder="Course Code" value={newCourse.code} onChange={(e) => setNewCourse({ ...newCourse, code: e.target.value })} />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Input placeholder="Course Code (e.g., CSC 301)" value={newCourse.code} onChange={(e) => setNewCourse({ ...newCourse, code: e.target.value })} />
                       <Input placeholder="Course Title" value={newCourse.title} onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })} />
-                      <Input placeholder="Units" type="number" value={newCourse.unit} onChange={(e) => setNewCourse({ ...newCourse, unit: Number(e.target.value) })} />
+                      <Input placeholder="Unit" type="number" value={newCourse.unit} onChange={(e) => setNewCourse({ ...newCourse, unit: parseInt(e.target.value) || 2 })} />
                       <Input placeholder="Department" value={newCourse.department} onChange={(e) => setNewCourse({ ...newCourse, department: e.target.value })} />
                       <Select value={newCourse.level} onValueChange={(v) => setNewCourse({ ...newCourse, level: v })}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          {["100L", "200L", "300L", "400L", "500L"].map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+                          {["100L", "200L", "300L", "400L"].map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
                         </SelectContent>
                       </Select>
                       <Select value={newCourse.semester} onValueChange={(v) => setNewCourse({ ...newCourse, semester: v })}>
@@ -382,7 +441,7 @@ const Admin = () => {
                       <TableRow>
                         <TableHead className="text-xs">Code</TableHead>
                         <TableHead className="text-xs">Title</TableHead>
-                        <TableHead className="text-xs hidden sm:table-cell">Units</TableHead>
+                        <TableHead className="text-xs hidden sm:table-cell">Unit</TableHead>
                         <TableHead className="text-xs hidden md:table-cell">Level</TableHead>
                         <TableHead className="text-xs hidden lg:table-cell">Dept</TableHead>
                         <TableHead className="text-xs w-20">Actions</TableHead>
@@ -391,15 +450,24 @@ const Admin = () => {
                     <TableBody>
                       {courses.map((c) => (
                         <TableRow key={c.id}>
-                          <TableCell className="text-xs sm:text-sm font-medium">{c.code}</TableCell>
+                          <TableCell className="text-xs sm:text-sm font-mono">{c.code}</TableCell>
                           <TableCell className="text-xs sm:text-sm">{c.title}</TableCell>
                           <TableCell className="text-xs sm:text-sm hidden sm:table-cell">{c.unit}</TableCell>
                           <TableCell className="text-xs sm:text-sm hidden md:table-cell">{c.level}</TableCell>
                           <TableCell className="text-xs sm:text-sm hidden lg:table-cell">{c.department}</TableCell>
                           <TableCell>
                             <div className="flex gap-1">
-                              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => { setEditingId(c.id); setEditData(c); }}><Edit2 className="w-3 h-3" /></Button>
-                              <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => deleteItem("admin_courses", c.id)}><Trash2 className="w-3 h-3" /></Button>
+                              {editingId === c.id ? (
+                                <>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => saveEdit("admin_courses")}><Save className="w-3 h-3" /></Button>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setEditingId(null)}><X className="w-3 h-3" /></Button>
+                                </>
+                              ) : (
+                                <>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => { setEditingId(c.id); setEditData(c); }}><Edit2 className="w-3 h-3" /></Button>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => setDeleteDialog({ table: "admin_courses", id: c.id, name: c.code })}><Trash2 className="w-3 h-3" /></Button>
+                                </>
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -423,20 +491,20 @@ const Admin = () => {
 
                 {showNewForm === "timetable" && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="border border-border rounded-lg p-4 mb-4 space-y-3">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <Select value={newTimetable.day} onValueChange={(v) => setNewTimetable({ ...newTimetable, day: v })}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                         </SelectContent>
                       </Select>
-                      <Input placeholder="Time (e.g. 8:00 - 10:00)" value={newTimetable.time_slot} onChange={(e) => setNewTimetable({ ...newTimetable, time_slot: e.target.value })} />
+                      <Input placeholder="Time Slot (e.g., 8:00 - 10:00)" value={newTimetable.time_slot} onChange={(e) => setNewTimetable({ ...newTimetable, time_slot: e.target.value })} />
                       <Input placeholder="Course Code" value={newTimetable.course_code} onChange={(e) => setNewTimetable({ ...newTimetable, course_code: e.target.value })} />
                       <Input placeholder="Venue" value={newTimetable.venue} onChange={(e) => setNewTimetable({ ...newTimetable, venue: e.target.value })} />
                       <Input placeholder="Lecturer" value={newTimetable.lecturer} onChange={(e) => setNewTimetable({ ...newTimetable, lecturer: e.target.value })} />
                       <Input placeholder="Department" value={newTimetable.department} onChange={(e) => setNewTimetable({ ...newTimetable, department: e.target.value })} />
                     </div>
-                    <Button onClick={addTimetableEntry} disabled={!newTimetable.course_code} size="sm"><Save className="w-4 h-4 mr-1" />Save</Button>
+                    <Button onClick={addTimetableEntry} disabled={!newTimetable.course_code || !newTimetable.time_slot} size="sm"><Save className="w-4 h-4 mr-1" />Save</Button>
                   </motion.div>
                 )}
 
@@ -457,12 +525,22 @@ const Admin = () => {
                         <TableRow key={t.id}>
                           <TableCell className="text-xs sm:text-sm">{t.day}</TableCell>
                           <TableCell className="text-xs sm:text-sm">{t.time_slot}</TableCell>
-                          <TableCell className="text-xs sm:text-sm font-medium">{t.course_code}</TableCell>
+                          <TableCell className="text-xs sm:text-sm font-mono">{t.course_code}</TableCell>
                           <TableCell className="text-xs sm:text-sm hidden sm:table-cell">{t.venue}</TableCell>
                           <TableCell className="text-xs sm:text-sm hidden md:table-cell">{t.lecturer}</TableCell>
                           <TableCell>
                             <div className="flex gap-1">
-                              <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => deleteItem("admin_timetable", t.id)}><Trash2 className="w-3 h-3" /></Button>
+                              {editingId === t.id ? (
+                                <>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => saveEdit("admin_timetable")}><Save className="w-3 h-3" /></Button>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setEditingId(null)}><X className="w-3 h-3" /></Button>
+                                </>
+                              ) : (
+                                <>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => { setEditingId(t.id); setEditData(t); }}><Edit2 className="w-3 h-3" /></Button>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => setDeleteDialog({ table: "admin_timetable", id: t.id, name: t.course_code })}><Trash2 className="w-3 h-3" /></Button>
+                                </>
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -476,6 +554,22 @@ const Admin = () => {
           </Tabs>
         </div>
       </section>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deleteDialog} onOpenChange={() => setDeleteDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete <strong>{deleteDialog?.name}</strong>? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialog(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

@@ -1,10 +1,12 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, User, ChevronRight, GraduationCap, Plus, Trash2, MessageSquare, ArrowLeft } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User, ChevronRight, GraduationCap, Plus, Trash2, MessageSquare, ArrowLeft, LogIn, LogOut, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
 type Msg = { role: "user" | "assistant"; content: string };
 type Conversation = { id: string; title: string; created_at: string };
@@ -29,7 +31,6 @@ const suggestedQuestions = [
   "Tips for acing university exams",
 ];
 
-// Get page-aware recommendations
 const getPageRecommendations = (pathname: string): string[] => {
   if (pathname.includes("/departments/cs-ai")) {
     return ["Tell me about AI lecturers in CS department", "What courses does CS & AI offer?", "Career paths in Computer Science"];
@@ -60,6 +61,13 @@ const Chatbot = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [authUser, setAuthUser] = useState<any>(null);
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [authLoading, setAuthLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -76,17 +84,33 @@ const Chatbot = () => {
     if (isOpen && inputRef.current) inputRef.current.focus();
   }, [isOpen]);
 
-  // Load conversations on open
+  // Listen for auth changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setAuthUser(session?.user ?? null);
+    });
+    supabase.auth.getSession().then(({ data: { session } }) => setAuthUser(session?.user ?? null));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Load conversations on open or auth change
   useEffect(() => {
     if (isOpen) loadConversations();
-  }, [isOpen]);
+  }, [isOpen, authUser]);
 
   const loadConversations = async () => {
-    const { data } = await supabase
+    let query = supabase
       .from("chat_conversations")
       .select("id, title, created_at")
-      .eq("session_id", sessionId)
       .order("updated_at", { ascending: false });
+
+    if (authUser) {
+      query = query.eq("user_id", authUser.id);
+    } else {
+      query = query.eq("session_id", sessionId).is("user_id", null);
+    }
+
+    const { data } = await query;
     if (data) setConversations(data);
   };
 
@@ -117,6 +141,35 @@ const Chatbot = () => {
     if (currentConversationId === convId) startNewChat();
   };
 
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthLoading(true);
+    if (authMode === "login") {
+      const { error } = await supabase.auth.signInWithPassword({ email: authEmail, password: authPassword });
+      if (error) { setAuthLoading(false); return; }
+    } else {
+      const { error } = await supabase.auth.signUp({ email: authEmail, password: authPassword });
+      if (error) { setAuthLoading(false); return; }
+    }
+    setShowAuth(false);
+    setAuthEmail("");
+    setAuthPassword("");
+    setAuthLoading(false);
+  };
+
+  const handleGoogleSignIn = async () => {
+    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    if (!error) setShowAuth(false);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setAuthUser(null);
+    setMessages([]);
+    setCurrentConversationId(null);
+    setConversations([]);
+  };
+
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
     const userMsg: Msg = { role: "user", content: text.trim() };
@@ -126,12 +179,14 @@ const Chatbot = () => {
 
     let convId = currentConversationId;
 
-    // Create conversation if new
     if (!convId) {
       const title = text.trim().slice(0, 60);
+      const insertData: any = { session_id: sessionId, title };
+      if (authUser) insertData.user_id = authUser.id;
+
       const { data } = await supabase
         .from("chat_conversations")
-        .insert({ session_id: sessionId, title })
+        .insert(insertData)
         .select("id")
         .single();
       if (data) {
@@ -143,7 +198,6 @@ const Chatbot = () => {
       await supabase.from("chat_conversations").update({ updated_at: new Date().toISOString() }).eq("id", convId);
     }
 
-    // Save user message
     if (convId) {
       await supabase.from("chat_messages").insert({ conversation_id: convId, role: "user", content: text.trim() });
     }
@@ -151,7 +205,6 @@ const Chatbot = () => {
     let assistantSoFar = "";
     const allMessages = [...messages, userMsg];
 
-    // Add page context to help recommendations
     const contextMsg: Msg = {
       role: "user",
       content: `[Context: User is currently viewing ${location.pathname}. Provide contextual recommendations when relevant.]`,
@@ -213,7 +266,6 @@ const Chatbot = () => {
         }
       }
 
-      // Save assistant response
       if (convId && assistantSoFar) {
         await supabase.from("chat_messages").insert({ conversation_id: convId, role: "assistant", content: assistantSoFar });
       }
@@ -269,13 +321,13 @@ const Chatbot = () => {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[400px] sm:max-w-[calc(100vw-2rem)] h-full sm:h-[600px] sm:max-h-[calc(100vh-6rem)] bg-card border-0 sm:border sm:border-border sm:rounded-2xl shadow-elevated flex flex-col overflow-hidden"
+            className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[420px] sm:max-w-[calc(100vw-2rem)] h-full sm:h-[600px] sm:max-h-[calc(100vh-6rem)] bg-card border-0 sm:border sm:border-border sm:rounded-2xl shadow-elevated flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b border-border bg-primary text-primary-foreground">
               <div className="flex items-center gap-2 sm:gap-3">
-                {showHistory && (
-                  <button onClick={() => setShowHistory(false)} className="p-1 rounded-lg hover:bg-primary-foreground/10">
+                {(showHistory || showAuth) && (
+                  <button onClick={() => { setShowHistory(false); setShowAuth(false); }} className="p-1 rounded-lg hover:bg-primary-foreground/10">
                     <ArrowLeft className="w-4 h-4" />
                   </button>
                 )}
@@ -286,23 +338,26 @@ const Chatbot = () => {
                   <h3 className="font-display font-bold text-xs sm:text-sm">🤖 AI Academic Assistant</h3>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                    <p className="text-[10px] sm:text-xs opacity-90">{showHistory ? "Chat History" : "Online • Ask me anything"}</p>
+                    <p className="text-[10px] sm:text-xs opacity-90">
+                      {showHistory ? "Chat History" : showAuth ? "Sign In" : authUser ? `${authUser.email}` : "Online • Ask me anything"}
+                    </p>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setShowHistory(!showHistory)}
-                  className="p-1.5 rounded-lg hover:bg-primary-foreground/10 transition-colors"
-                  title="Chat History"
-                >
+                {authUser ? (
+                  <button onClick={handleSignOut} className="p-1.5 rounded-lg hover:bg-primary-foreground/10 transition-colors" title="Sign Out">
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button onClick={() => setShowAuth(!showAuth)} className="p-1.5 rounded-lg hover:bg-primary-foreground/10 transition-colors" title="Sign In to save chats">
+                    <LogIn className="w-4 h-4" />
+                  </button>
+                )}
+                <button onClick={() => setShowHistory(!showHistory)} className="p-1.5 rounded-lg hover:bg-primary-foreground/10 transition-colors" title="Chat History">
                   <MessageSquare className="w-4 h-4" />
                 </button>
-                <button
-                  onClick={startNewChat}
-                  className="p-1.5 rounded-lg hover:bg-primary-foreground/10 transition-colors"
-                  title="New Chat"
-                >
+                <button onClick={startNewChat} className="p-1.5 rounded-lg hover:bg-primary-foreground/10 transition-colors" title="New Chat">
                   <Plus className="w-4 h-4" />
                 </button>
                 <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg hover:bg-primary-foreground/10 transition-colors">
@@ -311,7 +366,59 @@ const Chatbot = () => {
               </div>
             </div>
 
-            {showHistory ? (
+            {showAuth ? (
+              /* Auth Panel */
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+                <div className="space-y-4">
+                  <div className="text-center mb-4">
+                    <LogIn className="w-10 h-10 text-primary mx-auto mb-2" />
+                    <h3 className="font-display font-bold text-foreground">Sign In</h3>
+                    <p className="text-xs text-muted-foreground mt-1">Sign in to save your chat history across devices</p>
+                  </div>
+                  <form onSubmit={handleAuthSubmit} className="space-y-3">
+                    <Input
+                      type="email"
+                      value={authEmail}
+                      onChange={(e) => setAuthEmail(e.target.value)}
+                      placeholder="Email address"
+                      className="text-sm"
+                      required
+                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        value={authPassword}
+                        onChange={(e) => setAuthPassword(e.target.value)}
+                        placeholder="Password"
+                        className="text-sm pr-10"
+                        required
+                      />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <Button type="submit" className="w-full text-sm" disabled={authLoading}>
+                      {authLoading ? "Please wait..." : authMode === "login" ? "Sign In" : "Create Account"}
+                    </Button>
+                  </form>
+                  <Button variant="outline" className="w-full text-sm" onClick={handleGoogleSignIn}>
+                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                      <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                      <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                      <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Sign in with Google
+                  </Button>
+                  <p className="text-center text-xs text-muted-foreground">
+                    {authMode === "login" ? "No account? " : "Have an account? "}
+                    <button onClick={() => setAuthMode(authMode === "login" ? "register" : "login")} className="text-primary hover:underline">
+                      {authMode === "login" ? "Register" : "Sign In"}
+                    </button>
+                  </p>
+                </div>
+              </div>
+            ) : showHistory ? (
               /* History Panel */
               <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                 <button
@@ -321,6 +428,11 @@ const Chatbot = () => {
                   <Plus className="w-4 h-4" />
                   Start New Chat
                 </button>
+                {!authUser && (
+                  <p className="text-xs text-muted-foreground text-center py-2">
+                    <button onClick={() => { setShowHistory(false); setShowAuth(true); }} className="text-primary hover:underline">Sign in</button> to save chats across devices
+                  </p>
+                )}
                 {conversations.length === 0 ? (
                   <p className="text-center text-muted-foreground text-sm py-8">No chat history yet</p>
                 ) : (
@@ -367,6 +479,11 @@ const Chatbot = () => {
                           <li>💡 Computing concepts explained</li>
                           <li>🔬 Research & career advice</li>
                         </ul>
+                        {!authUser && (
+                          <p className="mt-3 text-xs text-muted-foreground border-t border-border pt-2">
+                            💡 <button onClick={() => setShowAuth(true)} className="text-primary hover:underline font-medium">Sign in</button> to save your chat history
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="space-y-1.5 sm:space-y-2 pl-9 sm:pl-11">
@@ -447,7 +564,7 @@ const Chatbot = () => {
             )}
 
             {/* Input */}
-            {!showHistory && (
+            {!showHistory && !showAuth && (
               <div className="p-2 sm:p-3 border-t border-border bg-muted/30">
                 <form
                   onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}

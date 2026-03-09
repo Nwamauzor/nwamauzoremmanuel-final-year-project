@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { User, Users, FileText, BookOpen, Linkedin, Twitter, Mail, Download, Upload, LogOut } from "lucide-react";
+import { User, Users, FileText, BookOpen, Linkedin, Twitter, Mail, Download, Upload, LogOut, Eye, EyeOff, Check, X as XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,9 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
 import deanPhoto from "@/assets/dean-photo.jpg";
 import campusView from "@/assets/campus-view.jpg";
 import { useState, useEffect, useRef } from "react";
@@ -211,6 +214,7 @@ const Journals = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [givenName, setGivenName] = useState("");
   const [familyName, setFamilyName] = useState("");
   const [affiliation, setAffiliation] = useState("");
@@ -220,6 +224,8 @@ const Journals = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadTitle, setUploadTitle] = useState("");
   const [uploadDesc, setUploadDesc] = useState("");
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -264,17 +270,25 @@ const Journals = () => {
     setUser(null);
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user || !uploadTitle) return;
+    setPendingFile(file);
+    setShowConfirmDialog(true);
+  };
 
+  const confirmUpload = async () => {
+    if (!pendingFile || !user) return;
+    setShowConfirmDialog(false);
     setUploading(true);
-    const filePath = `${user.id}/${Date.now()}_${file.name}`;
-    const { error: uploadError } = await supabase.storage.from("journals").upload(filePath, file);
+
+    const filePath = `${user.id}/${Date.now()}_${pendingFile.name}`;
+    const { error: uploadError } = await supabase.storage.from("journals").upload(filePath, pendingFile);
 
     if (uploadError) {
       toast({ title: "Upload failed", description: uploadError.message, variant: "destructive" });
       setUploading(false);
+      setPendingFile(null);
       return;
     }
 
@@ -282,14 +296,22 @@ const Journals = () => {
 
     await supabase.from("journals").insert({
       user_id: user.id, title: uploadTitle, description: uploadDesc,
-      file_url: publicUrl, file_name: file.name, file_type: file.type,
+      file_url: publicUrl, file_name: pendingFile.name, file_type: pendingFile.type,
     });
 
-    toast({ title: "Journal uploaded!" });
+    toast({ title: "Journal uploaded successfully!" });
     setUploadTitle("");
     setUploadDesc("");
     setUploading(false);
+    setPendingFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
     loadJournals();
+  };
+
+  const cancelUpload = () => {
+    setShowConfirmDialog(false);
+    setPendingFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -369,9 +391,9 @@ const Journals = () => {
                   <Input id="uploadDesc" value={uploadDesc} onChange={(e) => setUploadDesc(e.target.value)} placeholder="Brief description" className="mt-1" />
                 </div>
                 <div>
-                  <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" className="hidden" onChange={handleFileUpload} />
+                  <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" className="hidden" onChange={handleFileSelect} />
                   <Button onClick={() => fileInputRef.current?.click()} disabled={uploading || !uploadTitle} className="w-full">
-                    <Upload className="w-4 h-4 mr-2" />{uploading ? "Uploading..." : "Choose & Upload File"}
+                    <Upload className="w-4 h-4 mr-2" />{uploading ? "Uploading..." : "Choose File"}
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">Supported: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX</p>
@@ -391,7 +413,12 @@ const Journals = () => {
                   </div>
                   <div>
                     <Label htmlFor="password" className="text-sm">Password</Label>
-                    <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password" className="mt-1" required />
+                    <div className="relative mt-1">
+                      <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password" required />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Checkbox id="remember" checked={keepLoggedIn} onCheckedChange={(v) => setKeepLoggedIn(!!v)} />
@@ -438,7 +465,12 @@ const Journals = () => {
                   </div>
                   <div>
                     <Label htmlFor="regPassword" className="text-sm">Password</Label>
-                    <Input id="regPassword" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create password" className="mt-1" required />
+                    <div className="relative mt-1">
+                      <Input id="regPassword" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create password" required />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
                   <Button type="submit" className="w-full">Register</Button>
                   <p className="text-center text-xs sm:text-sm text-muted-foreground">
@@ -451,6 +483,44 @@ const Journals = () => {
           )}
         </motion.div>
       </div>
+
+      {/* Upload Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Upload</DialogTitle>
+            <DialogDescription>Please review your upload details before proceeding.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Title:</span>
+              <span className="font-medium text-foreground">{uploadTitle}</span>
+            </div>
+            {uploadDesc && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Description:</span>
+                <span className="font-medium text-foreground">{uploadDesc}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">File:</span>
+              <span className="font-medium text-foreground">{pendingFile?.name}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Size:</span>
+              <span className="font-medium text-foreground">{pendingFile ? (pendingFile.size / 1024 / 1024).toFixed(2) + " MB" : ""}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Type:</span>
+              <span className="font-medium text-foreground">{pendingFile?.type || "Unknown"}</span>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={cancelUpload}><XIcon className="w-4 h-4 mr-1" />Cancel</Button>
+            <Button onClick={confirmUpload}><Check className="w-4 h-4 mr-1" />Confirm Upload</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </ScaleIn>
   );
 };
