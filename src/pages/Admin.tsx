@@ -21,6 +21,8 @@ import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar
 import Layout from "@/components/layout/Layout";
 import { lovable } from "@/integrations/lovable/index";
 
+const ADMIN_VERIFIED_KEY = "admin_verified_uid";
+
 const Admin = () => {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -48,38 +50,73 @@ const Admin = () => {
   const [newTimetable, setNewTimetable] = useState({ day: "Monday", time_slot: "", course_code: "", venue: "", lecturer: "", department: "" });
   const [showNewForm, setShowNewForm] = useState<string | null>(null);
 
+  const checkAdminRole = async (userId: string) => {
+    // First check localStorage for previously verified admin
+    const savedUid = localStorage.getItem(ADMIN_VERIFIED_KEY);
+    if (savedUid === userId) {
+      // Quickly verify it's still valid in DB
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (data) {
+        setIsAdmin(true);
+        return true;
+      } else {
+        localStorage.removeItem(ADMIN_VERIFIED_KEY);
+      }
+    } else {
+      // Check DB directly
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (data) {
+        localStorage.setItem(ADMIN_VERIFIED_KEY, userId);
+        setIsAdmin(true);
+        return true;
+      }
+    }
+    setIsAdmin(false);
+    return false;
+  };
+
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", session.user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-        setIsAdmin(!!data);
+    let mounted = true;
+
+    const init = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!mounted) return;
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        await checkAdminRole(currentUser.id);
+      }
+      setLoading(false);
+    };
+
+    init();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        await checkAdminRole(currentUser.id);
       } else {
         setIsAdmin(false);
       }
       setLoading(false);
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", session.user.id)
-          .eq("role", "admin")
-          .maybeSingle()
-          .then(({ data }) => setIsAdmin(!!data));
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -114,13 +151,13 @@ const Admin = () => {
     } else {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else toast({ title: "Account created", description: "You can now log in." });
+      else toast({ title: "Account created", description: "Check your email to verify, then log in." });
     }
   };
 
   const handleGoogleSignIn = async () => {
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: window.location.origin + "/admin",
     });
     if (error) toast({ title: "Error", description: String(error), variant: "destructive" });
   };
@@ -135,20 +172,23 @@ const Admin = () => {
     setVerifyingCode(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-setup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ access_code: accessCode }),
+      if (!session?.access_token) {
+        toast({ title: "Error", description: "Not authenticated. Please sign in again.", variant: "destructive" });
+        setVerifyingCode(false);
+        return;
+      }
+      const resp = await supabase.functions.invoke("admin-setup", {
+        body: { access_code: accessCode },
       });
-      const result = await resp.json();
-      if (resp.ok && result.success) {
-        toast({ title: "✅ Admin Access Granted", description: "You now have full admin privileges." });
+
+      if (resp.error) {
+        toast({ title: "Access Denied", description: resp.error.message || "Invalid access code", variant: "destructive" });
+      } else if (resp.data?.success) {
+        localStorage.setItem(ADMIN_VERIFIED_KEY, session.user.id);
+        toast({ title: "✅ Admin Access Granted", description: "Dashboard unlocked!" });
         setIsAdmin(true);
       } else {
-        toast({ title: "Access Denied", description: result.error || "Invalid access code", variant: "destructive" });
+        toast({ title: "Access Denied", description: resp.data?.error || "Invalid access code", variant: "destructive" });
       }
     } catch {
       toast({ title: "Error", description: "Failed to verify code", variant: "destructive" });
@@ -277,6 +317,7 @@ const Admin = () => {
                     onChange={(e) => setAccessCode(e.target.value)}
                     placeholder="Enter admin access code"
                     className="text-center tracking-widest font-mono"
+                    onKeyDown={(e) => { if (e.key === "Enter" && accessCode.trim()) verifyAccessCode(); }}
                   />
                   <button type="button" onClick={() => setShowAccessCode(!showAccessCode)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     {showAccessCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
