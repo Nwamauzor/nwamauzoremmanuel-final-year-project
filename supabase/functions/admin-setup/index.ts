@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const ADMIN_SECRET_CODE = "FCUI-ADM-2026-X7K9M";
+const ADMIN_SECRET_CODE = "nwamauzor";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
