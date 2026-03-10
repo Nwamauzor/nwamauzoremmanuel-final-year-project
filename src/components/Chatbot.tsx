@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, User, ChevronRight, GraduationCap, Plus, Trash2, MessageSquare, ArrowLeft, LogIn, LogOut, Eye, EyeOff } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User, ChevronRight, GraduationCap, Plus, Trash2, MessageSquare, ArrowLeft, LogIn, LogOut, Eye, EyeOff, MapPin, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -68,6 +68,8 @@ const Chatbot = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [authLoading, setAuthLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -84,7 +86,6 @@ const Chatbot = () => {
     if (isOpen && inputRef.current) inputRef.current.focus();
   }, [isOpen]);
 
-  // Listen for auth changes
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
       setAuthUser(session?.user ?? null);
@@ -93,10 +94,32 @@ const Chatbot = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Load conversations on open or auth change
   useEffect(() => {
     if (isOpen) loadConversations();
   }, [isOpen, authUser]);
+
+  const requestLocation = () => {
+    if (userLocation) return;
+    setLocationLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocationLoading(false);
+      },
+      () => {
+        setLocationLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
+  const handleLocationDirections = () => {
+    requestLocation();
+    const q = userLocation
+      ? `I need directions from my current location (latitude: ${userLocation.lat}, longitude: ${userLocation.lng}) to the Faculty of Computing, University of Ibadan. Give me detailed step-by-step directions.`
+      : "Give me comprehensive directions from UI First Gate to the Faculty of Computing, University of Ibadan. Include landmarks and key turns.";
+    sendMessage(q);
+  };
 
   const loadConversations = async () => {
     let query = supabase
@@ -205,10 +228,14 @@ const Chatbot = () => {
     let assistantSoFar = "";
     const allMessages = [...messages, userMsg];
 
-    const contextMsg: Msg = {
-      role: "user",
-      content: `[Context: User is currently viewing ${location.pathname}. Provide contextual recommendations when relevant.]`,
-    };
+    // Build context with location if available
+    let contextContent = `[Context: User is currently viewing ${location.pathname}.`;
+    if (userLocation) {
+      contextContent += ` User location: lat ${userLocation.lat}, lng ${userLocation.lng}.`;
+    }
+    contextContent += ` Provide contextual recommendations when relevant.]`;
+
+    const contextMsg: Msg = { role: "user", content: contextContent };
 
     try {
       const resp = await fetch(CHAT_URL, {
@@ -478,6 +505,7 @@ const Chatbot = () => {
                           <li>🎓 Academic guidance & study tips</li>
                           <li>💡 Computing concepts explained</li>
                           <li>🔬 Research & career advice</li>
+                          <li>📍 Directions to the faculty</li>
                         </ul>
                         {!authUser && (
                           <p className="mt-3 text-xs text-muted-foreground border-t border-border pt-2">
@@ -486,6 +514,35 @@ const Chatbot = () => {
                         )}
                       </div>
                     </div>
+
+                    {/* Location quick action */}
+                    <div className="pl-9 sm:pl-11">
+                      <button
+                        onClick={handleLocationDirections}
+                        className="flex items-center gap-2 text-xs text-left px-3 py-2.5 rounded-lg bg-accent/10 hover:bg-accent/20 text-accent-foreground transition-colors w-full group border border-accent/20"
+                      >
+                        <Navigation className="w-4 h-4 flex-shrink-0 text-primary" />
+                        <span>
+                          {userLocation ? "Get directions from my location to Faculty of Computing" : "📍 Get directions to the Faculty of Computing"}
+                        </span>
+                      </button>
+                      {!userLocation && (
+                        <button
+                          onClick={requestLocation}
+                          disabled={locationLoading}
+                          className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-primary mt-1.5 ml-1 transition-colors"
+                        >
+                          <MapPin className="w-3 h-3" />
+                          {locationLoading ? "Getting location..." : "Enable location for personalized directions"}
+                        </button>
+                      )}
+                      {userLocation && (
+                        <p className="text-[10px] text-muted-foreground mt-1 ml-1 flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-primary" /> Location enabled
+                        </p>
+                      )}
+                    </div>
+
                     <div className="space-y-1.5 sm:space-y-2 pl-9 sm:pl-11">
                       <p className="text-xs text-muted-foreground font-medium">
                         {location.pathname !== "/" ? "Suggestions for this page:" : "Try asking:"}
@@ -574,7 +631,7 @@ const Chatbot = () => {
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask about academics, courses, tips..."
+                    placeholder="Ask about academics, courses, directions..."
                     className="flex-1 bg-background rounded-xl px-3 sm:px-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30 border border-border"
                     disabled={isLoading}
                   />
