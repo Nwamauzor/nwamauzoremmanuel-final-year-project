@@ -386,12 +386,12 @@ const Admin = () => {
     </div>
   );
 
-  const contentByPage = siteContent.reduce((acc: Record<string, any[]>, item) => {
+  const contentByPage: Record<string, any[]> = siteContent.reduce((acc: Record<string, any[]>, item: any) => {
     const key = `${item.page} / ${item.section}`;
     if (!acc[key]) acc[key] = [];
     acc[key].push(item);
     return acc;
-  }, {});
+  }, {} as Record<string, any[]>);
 
   return (
     <div className="min-h-screen bg-background">
