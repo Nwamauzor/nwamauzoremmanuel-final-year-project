@@ -330,8 +330,8 @@ const Chatbot = () => {
             whileTap={{ scale: 0.95 }}
           >
             <GraduationCap className="w-5 h-5" />
-            <span className="font-semibold text-sm hidden sm:inline">🤖 AI Assistant</span>
-            <span className="font-semibold text-xs sm:hidden">Chat</span>
+            <span className="font-semibold text-sm hidden sm:inline">Gandus AI</span>
+            <span className="font-semibold text-xs sm:hidden">Gandus</span>
             <motion.span
               className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-accent border-2 border-primary"
               animate={{ scale: [1, 1.3, 1] }}
