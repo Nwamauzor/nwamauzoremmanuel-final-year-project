@@ -150,8 +150,8 @@ const Admission = () => (
             </div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button asChild className="bg-primary hover:bg-primary-dark text-sm sm:text-base">
-                <a href="https://spgs.ui.edu.ng" target="_blank" rel="noopener noreferrer">
-                  Apply via SPGS Portal
+                <a href="http://pgcollege.ui.edu.ng/" target="_blank" rel="noopener noreferrer">
+                  Apply via PG College Portal
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </a>
               </Button>

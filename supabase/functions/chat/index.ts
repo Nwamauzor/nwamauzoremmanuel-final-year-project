@@ -26,7 +26,7 @@ const SYSTEM_PROMPT = `You are the **AI Academic Assistant** for the Faculty of 
 
 ### Admission:
 - **Undergraduate**: 5 O'Level credits including Mathematics and English, UTME score meeting cut-off, Post-UTME screening. Physics/Further Math recommended. Apply at https://admissions.ui.edu.ng
-- **Postgraduate**: M.Sc., M.Phil., Ph.D. programs available. Apply at https://spgs.ui.edu.ng
+- **Postgraduate**: M.Sc., M.Phil., Ph.D. programs available. Apply at http://pgcollege.ui.edu.ng/
 - Programs: Computer Science, Data Science, Cybersecurity, ICT, Software Engineering
 
 ### Grading System:
