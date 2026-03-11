@@ -499,7 +499,7 @@ const Chatbot = () => {
                         <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                       </div>
                       <div className="bg-muted rounded-2xl rounded-tl-sm p-3 sm:p-4 text-sm text-foreground max-w-[85%] leading-relaxed">
-                        👋 Hi! I'm your <strong>AI Academic Assistant</strong>. I can help with:
+                        👋 Hi! I'm <strong>Gandus AI</strong>, your academic assistant. I can help with:
                         <ul className="mt-2 space-y-1 text-muted-foreground text-xs sm:text-sm">
                           <li>📚 Faculty info & admissions</li>
                           <li>🎓 Academic guidance & study tips</li>
