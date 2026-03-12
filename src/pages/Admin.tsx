@@ -531,6 +531,25 @@ const Admin = () => {
                 </Button>
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <Select value={contentFilterPage} onValueChange={setContentFilterPage}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by page" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All pages</SelectItem>
+                    {MANAGED_PAGES.map((page) => (
+                      <SelectItem key={page} value={page}>{page}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  placeholder="Filter by section"
+                  value={contentFilterSection}
+                  onChange={(e) => setContentFilterSection(e.target.value)}
+                />
+              </div>
+
               {showNewForm === "content" && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="border border-border rounded-lg p-4 mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
