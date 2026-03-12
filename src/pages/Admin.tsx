@@ -547,7 +547,7 @@ const Admin = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All pages</SelectItem>
-                    {MANAGED_PAGES.map((page) => (
+                    {availableContentPages.map((page) => (
                       <SelectItem key={page} value={page}>{page}</SelectItem>
                     ))}
                   </SelectContent>
