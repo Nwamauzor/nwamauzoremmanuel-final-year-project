@@ -18,10 +18,58 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe } from "lucide-react";
+import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe, Moon, Sun } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
+import { useTheme } from "next-themes";
 
 const ADMIN_VERIFIED_KEY = "admin_verified_uid";
+
+const safeStorage = {
+  get: (key: string) => {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set: (key: string, value: string) => {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+      // ignore unavailable storage contexts
+    }
+  },
+  remove: (key: string) => {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // ignore unavailable storage contexts
+    }
+  },
+};
+
+const MANAGED_PAGES = [
+  "home",
+  "history",
+  "departments",
+  "departments/cs-ai",
+  "departments/data-science",
+  "departments/ict",
+  "departments/software",
+  "deans-office",
+  "deans-office/dean",
+  "deans-office/staff",
+  "deans-office/journals",
+  "students",
+  "students/admission",
+  "students/activities",
+  "students/registration",
+  "students/grading",
+  "students/conduct",
+  "alumni",
+  "alumni/home",
+  "alumni/services",
+];
 
 const Admin = () => {
   const [user, setUser] = useState<any>(null);
@@ -34,6 +82,9 @@ const Admin = () => {
   const [accessCode, setAccessCode] = useState("");
   const [showAccessCode, setShowAccessCode] = useState(false);
   const [verifyingCode, setVerifyingCode] = useState(false);
+  const [contentFilterPage, setContentFilterPage] = useState("all");
+  const [contentFilterSection, setContentFilterSection] = useState("");
+  const { theme, resolvedTheme, setTheme } = useTheme();
   const { toast } = useToast();
 
   // Data states
@@ -55,36 +106,25 @@ const Admin = () => {
 
   const checkAdminRole = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      // Check localStorage cache first
-      const savedUid = localStorage.getItem(ADMIN_VERIFIED_KEY);
-      if (savedUid === userId) {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", userId)
-          .eq("role", "admin")
-          .maybeSingle();
-        if (data) {
-          setIsAdmin(true);
-          return true;
-        }
-        localStorage.removeItem(ADMIN_VERIFIED_KEY);
-      } else {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", userId)
-          .eq("role", "admin")
-          .maybeSingle();
-        if (data) {
-          localStorage.setItem(ADMIN_VERIFIED_KEY, userId);
-          setIsAdmin(true);
-          return true;
-        }
+      const savedUid = safeStorage.get(ADMIN_VERIFIED_KEY);
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (data) {
+        if (savedUid !== userId) safeStorage.set(ADMIN_VERIFIED_KEY, userId);
+        setIsAdmin(true);
+        return true;
       }
+
+      safeStorage.remove(ADMIN_VERIFIED_KEY);
     } catch (e) {
       console.error("Admin check error:", e);
     }
+
     setIsAdmin(false);
     return false;
   }, []);
@@ -200,37 +240,66 @@ const Admin = () => {
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem(ADMIN_VERIFIED_KEY);
+    safeStorage.remove(ADMIN_VERIFIED_KEY);
     await supabase.auth.signOut();
     setUser(null);
     setIsAdmin(false);
   };
 
   const verifyAccessCode = async () => {
+    if (verifyingCode) return;
+
+    const normalizedCode = accessCode.trim();
+    if (!normalizedCode) {
+      toast({ title: "Access code required", description: "Please enter your access code.", variant: "destructive" });
+      return;
+    }
+
     setVerifyingCode(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      await supabase.auth.refreshSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session?.access_token) {
         toast({ title: "Error", description: "Not authenticated. Please sign in again.", variant: "destructive" });
         setVerifyingCode(false);
         return;
       }
 
-      const resp = await supabase.functions.invoke("admin-setup", {
-        body: { access_code: accessCode },
+      const alreadyAdmin = await checkAdminRole(session.user.id);
+      if (alreadyAdmin) {
+        toast({ title: "Admin access active", description: "Welcome back to your dashboard." });
+        setVerifyingCode(false);
+        return;
+      }
+
+      const invokePromise = supabase.functions.invoke("admin-setup", {
+        body: { access_code: normalizedCode },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
+
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error("Verification timed out. Please retry.")), 7000);
+      });
+
+      const resp = await Promise.race([invokePromise, timeoutPromise]);
 
       if (resp.error) {
         toast({ title: "Access Denied", description: resp.error.message || "Invalid access code", variant: "destructive" });
       } else if (resp.data?.success) {
-        localStorage.setItem(ADMIN_VERIFIED_KEY, session.user.id);
+        safeStorage.set(ADMIN_VERIFIED_KEY, session.user.id);
+        await checkAdminRole(session.user.id);
         toast({ title: "✅ Admin Access Granted", description: "Dashboard unlocked!" });
-        setIsAdmin(true);
       } else {
         toast({ title: "Access Denied", description: resp.data?.error || "Invalid access code", variant: "destructive" });
       }
-    } catch {
-      toast({ title: "Error", description: "Failed to verify code", variant: "destructive" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to verify code";
+      toast({ title: "Error", description: message, variant: "destructive" });
     }
     setVerifyingCode(false);
   };
@@ -386,7 +455,13 @@ const Admin = () => {
     </div>
   );
 
-  const contentByPage: Record<string, any[]> = siteContent.reduce((acc: Record<string, any[]>, item: any) => {
+  const filteredContent = siteContent.filter((item) => {
+    const pagePass = contentFilterPage === "all" || item.page === contentFilterPage;
+    const sectionPass = !contentFilterSection.trim() || item.section.toLowerCase().includes(contentFilterSection.trim().toLowerCase());
+    return pagePass && sectionPass;
+  });
+
+  const contentByPage: Record<string, any[]> = filteredContent.reduce((acc: Record<string, any[]>, item: any) => {
     const key = `${item.page} / ${item.section}`;
     if (!acc[key]) acc[key] = [];
     acc[key].push(item);
@@ -403,6 +478,14 @@ const Admin = () => {
             <p className="text-muted-foreground text-xs">{user?.email}</p>
           </div>
           <div className="flex gap-2">
+            <Button
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              variant="outline"
+              size="sm"
+              title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+            >
+              {resolvedTheme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             <Button asChild variant="outline" size="sm">
               <a href="/" target="_blank">
                 <Globe className="w-4 h-4 mr-1" />View Site
@@ -448,14 +531,33 @@ const Admin = () => {
                 </Button>
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <Select value={contentFilterPage} onValueChange={setContentFilterPage}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by page" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All pages</SelectItem>
+                    {MANAGED_PAGES.map((page) => (
+                      <SelectItem key={page} value={page}>{page}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  placeholder="Filter by section"
+                  value={contentFilterSection}
+                  onChange={(e) => setContentFilterSection(e.target.value)}
+                />
+              </div>
+
               {showNewForm === "content" && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="border border-border rounded-lg p-4 mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Select value={newContent.page} onValueChange={(v) => setNewContent({ ...newContent, page: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select Page" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder="Select Page / Subpage" /></SelectTrigger>
                       <SelectContent>
-                        {["home", "history", "departments", "deans-office", "students", "alumni"].map((p) => (
-                          <SelectItem key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1).replace("-", " ")}</SelectItem>
+                        {MANAGED_PAGES.map((p) => (
+                          <SelectItem key={p} value={p}>{p}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
