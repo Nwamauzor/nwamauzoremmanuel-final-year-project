@@ -98,27 +98,46 @@ const Chatbot = () => {
     if (isOpen) loadConversations();
   }, [isOpen, authUser]);
 
-  const requestLocation = () => {
-    if (userLocation) return;
-    setLocationLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setLocationLoading(false);
-      },
-      () => {
-        setLocationLoading(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  };
+  const requestLocation = () =>
+    new Promise<{ lat: number; lng: number }>((resolve, reject) => {
+      if (userLocation) {
+        resolve(userLocation);
+        return;
+      }
 
-  const handleLocationDirections = () => {
-    requestLocation();
-    const q = userLocation
-      ? `I need directions from my current location (latitude: ${userLocation.lat}, longitude: ${userLocation.lng}) to the Faculty of Computing, University of Ibadan. Give me detailed step-by-step directions.`
-      : "Give me comprehensive directions from UI First Gate to the Faculty of Computing, University of Ibadan. Include landmarks and key turns.";
-    sendMessage(q);
+      if (!("geolocation" in navigator)) {
+        reject(new Error("Geolocation is not supported"));
+        return;
+      }
+
+      setLocationLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          setUserLocation(coords);
+          setLocationLoading(false);
+          resolve(coords);
+        },
+        (err) => {
+          setLocationLoading(false);
+          reject(err);
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 },
+      );
+    });
+
+  const handleLocationDirections = async () => {
+    try {
+      const coords = await requestLocation();
+      const mapsLink = `https://www.google.com/maps/dir/${coords.lat},${coords.lng}/7.4441,3.8997`;
+      await sendMessage(
+        `Use my live coordinates (lat: ${coords.lat}, lng: ${coords.lng}) and give accurate directions to the Faculty of Computing, University of Ibadan. Start with this Google Maps route link: ${mapsLink}. Also include a reliable landmark-based route from UI First Gate to the faculty.`,
+      );
+    } catch {
+      await sendMessage(
+        "I could not enable live location. Please provide accurate directions from UI First Gate to Faculty of Computing and include a Google Maps route link.",
+      );
+    }
   };
 
   const loadConversations = async () => {
