@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,8 +18,9 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe } from "lucide-react";
+import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe, Moon, Sun } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
+import { useTheme } from "next-themes";
 
 const ADMIN_VERIFIED_KEY = "admin_verified_uid";
 
