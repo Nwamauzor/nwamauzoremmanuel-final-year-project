@@ -24,6 +24,53 @@ import { useTheme } from "next-themes";
 
 const ADMIN_VERIFIED_KEY = "admin_verified_uid";
 
+const safeStorage = {
+  get: (key: string) => {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set: (key: string, value: string) => {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+      // ignore unavailable storage contexts
+    }
+  },
+  remove: (key: string) => {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // ignore unavailable storage contexts
+    }
+  },
+};
+
+const MANAGED_PAGES = [
+  "home",
+  "history",
+  "departments",
+  "departments/cs-ai",
+  "departments/data-science",
+  "departments/ict",
+  "departments/software",
+  "deans-office",
+  "deans-office/dean",
+  "deans-office/staff",
+  "deans-office/journals",
+  "students",
+  "students/admission",
+  "students/activities",
+  "students/registration",
+  "students/grading",
+  "students/conduct",
+  "alumni",
+  "alumni/home",
+  "alumni/services",
+];
+
 const Admin = () => {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
