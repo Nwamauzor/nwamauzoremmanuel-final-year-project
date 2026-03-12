@@ -240,37 +240,66 @@ const Admin = () => {
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem(ADMIN_VERIFIED_KEY);
+    safeStorage.remove(ADMIN_VERIFIED_KEY);
     await supabase.auth.signOut();
     setUser(null);
     setIsAdmin(false);
   };
 
   const verifyAccessCode = async () => {
+    if (verifyingCode) return;
+
+    const normalizedCode = accessCode.trim();
+    if (!normalizedCode) {
+      toast({ title: "Access code required", description: "Please enter your access code.", variant: "destructive" });
+      return;
+    }
+
     setVerifyingCode(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      await supabase.auth.refreshSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session?.access_token) {
         toast({ title: "Error", description: "Not authenticated. Please sign in again.", variant: "destructive" });
         setVerifyingCode(false);
         return;
       }
 
-      const resp = await supabase.functions.invoke("admin-setup", {
-        body: { access_code: accessCode },
+      const alreadyAdmin = await checkAdminRole(session.user.id);
+      if (alreadyAdmin) {
+        toast({ title: "Admin access active", description: "Welcome back to your dashboard." });
+        setVerifyingCode(false);
+        return;
+      }
+
+      const invokePromise = supabase.functions.invoke("admin-setup", {
+        body: { access_code: normalizedCode },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
+
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error("Verification timed out. Please retry.")), 7000);
+      });
+
+      const resp = await Promise.race([invokePromise, timeoutPromise]);
 
       if (resp.error) {
         toast({ title: "Access Denied", description: resp.error.message || "Invalid access code", variant: "destructive" });
       } else if (resp.data?.success) {
-        localStorage.setItem(ADMIN_VERIFIED_KEY, session.user.id);
+        safeStorage.set(ADMIN_VERIFIED_KEY, session.user.id);
+        await checkAdminRole(session.user.id);
         toast({ title: "✅ Admin Access Granted", description: "Dashboard unlocked!" });
-        setIsAdmin(true);
       } else {
         toast({ title: "Access Denied", description: resp.data?.error || "Invalid access code", variant: "destructive" });
       }
-    } catch {
-      toast({ title: "Error", description: "Failed to verify code", variant: "destructive" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to verify code";
+      toast({ title: "Error", description: message, variant: "destructive" });
     }
     setVerifyingCode(false);
   };
