@@ -535,10 +535,10 @@ const Admin = () => {
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="border border-border rounded-lg p-4 mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Select value={newContent.page} onValueChange={(v) => setNewContent({ ...newContent, page: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select Page" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder="Select Page / Subpage" /></SelectTrigger>
                       <SelectContent>
-                        {["home", "history", "departments", "deans-office", "students", "alumni"].map((p) => (
-                          <SelectItem key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1).replace("-", " ")}</SelectItem>
+                        {MANAGED_PAGES.map((p) => (
+                          <SelectItem key={p} value={p}>{p}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
