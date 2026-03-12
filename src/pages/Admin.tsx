@@ -475,6 +475,8 @@ const Admin = () => {
     return acc;
   }, {} as Record<string, any[]>);
 
+  const availableContentPages = Array.from(new Set([...MANAGED_PAGES, ...siteContent.map((item) => item.page)])).sort();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
