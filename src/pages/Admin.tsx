@@ -455,13 +455,11 @@ const Admin = () => {
     </div>
   );
 
-  const filteredContent = useMemo(() => {
-    return siteContent.filter((item) => {
-      const pagePass = contentFilterPage === "all" || item.page === contentFilterPage;
-      const sectionPass = !contentFilterSection.trim() || item.section.toLowerCase().includes(contentFilterSection.trim().toLowerCase());
-      return pagePass && sectionPass;
-    });
-  }, [siteContent, contentFilterPage, contentFilterSection]);
+  const filteredContent = siteContent.filter((item) => {
+    const pagePass = contentFilterPage === "all" || item.page === contentFilterPage;
+    const sectionPass = !contentFilterSection.trim() || item.section.toLowerCase().includes(contentFilterSection.trim().toLowerCase());
+    return pagePass && sectionPass;
+  });
 
   const contentByPage: Record<string, any[]> = filteredContent.reduce((acc: Record<string, any[]>, item: any) => {
     const key = `${item.page} / ${item.section}`;
