@@ -562,14 +562,19 @@ const Admin = () => {
               {showNewForm === "content" && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="border border-border rounded-lg p-4 mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Select value={newContent.page} onValueChange={(v) => setNewContent({ ...newContent, page: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select Page / Subpage" /></SelectTrigger>
-                      <SelectContent>
-                        {MANAGED_PAGES.map((p) => (
-                          <SelectItem key={p} value={p}>{p}</SelectItem>
+                    <div className="space-y-2">
+                      <Input
+                        placeholder="Page or subpage path (e.g., history, departments/cs-ai)"
+                        value={newContent.page}
+                        onChange={(e) => setNewContent({ ...newContent, page: e.target.value.trim().toLowerCase() })}
+                        list="managed-pages"
+                      />
+                      <datalist id="managed-pages">
+                        {availableContentPages.map((p) => (
+                          <option key={p} value={p} />
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </datalist>
+                    </div>
                     <Input placeholder="Section (e.g., hero, welcome, about)" value={newContent.section} onChange={(e) => setNewContent({ ...newContent, section: e.target.value })} />
                     <Input placeholder="Content Key (e.g., title, description)" value={newContent.content_key} onChange={(e) => setNewContent({ ...newContent, content_key: e.target.value })} />
                     <Select value={newContent.content_type} onValueChange={(v) => setNewContent({ ...newContent, content_type: v })}>
