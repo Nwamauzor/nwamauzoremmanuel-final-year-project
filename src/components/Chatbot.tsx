@@ -548,7 +548,9 @@ const Chatbot = () => {
                       </button>
                       {!userLocation && (
                         <button
-                          onClick={requestLocation}
+                          onClick={() => {
+                            void requestLocation();
+                          }}
                           disabled={locationLoading}
                           className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-primary mt-1.5 ml-1 transition-colors"
                         >
