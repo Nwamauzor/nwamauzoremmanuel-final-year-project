@@ -84,7 +84,7 @@ const Admin = () => {
   const [verifyingCode, setVerifyingCode] = useState(false);
   const [contentFilterPage, setContentFilterPage] = useState("all");
   const [contentFilterSection, setContentFilterSection] = useState("");
-  const { theme, resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const { toast } = useToast();
 
   // Data states
@@ -257,42 +257,48 @@ const Admin = () => {
 
     setVerifyingCode(true);
     try {
-      await supabase.auth.refreshSession();
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const sessionResult: any = await Promise.race([
+        supabase.auth.getSession(),
+        new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("Session check timed out. Please refresh and try again.")), 2500);
+        }),
+      ]);
 
+      const session = sessionResult?.data?.session;
       if (!session?.access_token) {
         toast({ title: "Error", description: "Not authenticated. Please sign in again.", variant: "destructive" });
-        setVerifyingCode(false);
         return;
       }
 
       const alreadyAdmin = await checkAdminRole(session.user.id);
       if (alreadyAdmin) {
         toast({ title: "Admin access active", description: "Welcome back to your dashboard." });
-        setVerifyingCode(false);
         return;
       }
 
-      const invokePromise = supabase.functions.invoke("admin-setup", {
-        body: { access_code: normalizedCode },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error("Verification timed out. Please retry.")), 7000);
-      });
-
-      const resp = await Promise.race([invokePromise, timeoutPromise]);
+      const resp: any = await Promise.race([
+        supabase.functions.invoke("admin-setup", {
+          body: { access_code: normalizedCode },
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }),
+        new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("Verification timed out. Please try again.")), 4500);
+        }),
+      ]);
 
       if (resp.error) {
         toast({ title: "Access Denied", description: resp.error.message || "Invalid access code", variant: "destructive" });
       } else if (resp.data?.success) {
         safeStorage.set(ADMIN_VERIFIED_KEY, session.user.id);
-        await checkAdminRole(session.user.id);
+        setIsAdmin(true);
+        setAccessCode("");
+        loadStaff();
+        loadCourses();
+        loadTimetable();
+        loadSiteContent();
+        loadJournals();
         toast({ title: "✅ Admin Access Granted", description: "Dashboard unlocked!" });
       } else {
         toast({ title: "Access Denied", description: resp.data?.error || "Invalid access code", variant: "destructive" });
@@ -300,8 +306,9 @@ const Admin = () => {
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to verify code";
       toast({ title: "Error", description: message, variant: "destructive" });
+    } finally {
+      setVerifyingCode(false);
     }
-    setVerifyingCode(false);
   };
 
   // CRUD operations
@@ -468,6 +475,8 @@ const Admin = () => {
     return acc;
   }, {} as Record<string, any[]>);
 
+  const availableContentPages = Array.from(new Set([...MANAGED_PAGES, ...siteContent.map((item) => item.page)])).sort();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
@@ -538,7 +547,7 @@ const Admin = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All pages</SelectItem>
-                    {MANAGED_PAGES.map((page) => (
+                    {availableContentPages.map((page) => (
                       <SelectItem key={page} value={page}>{page}</SelectItem>
                     ))}
                   </SelectContent>
@@ -553,14 +562,19 @@ const Admin = () => {
               {showNewForm === "content" && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="border border-border rounded-lg p-4 mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Select value={newContent.page} onValueChange={(v) => setNewContent({ ...newContent, page: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select Page / Subpage" /></SelectTrigger>
-                      <SelectContent>
-                        {MANAGED_PAGES.map((p) => (
-                          <SelectItem key={p} value={p}>{p}</SelectItem>
+                    <div className="space-y-2">
+                      <Input
+                        placeholder="Page or subpage path (e.g., history, departments/cs-ai)"
+                        value={newContent.page}
+                        onChange={(e) => setNewContent({ ...newContent, page: e.target.value.trim().toLowerCase() })}
+                        list="managed-pages"
+                      />
+                      <datalist id="managed-pages">
+                        {availableContentPages.map((p) => (
+                          <option key={p} value={p} />
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </datalist>
+                    </div>
                     <Input placeholder="Section (e.g., hero, welcome, about)" value={newContent.section} onChange={(e) => setNewContent({ ...newContent, section: e.target.value })} />
                     <Input placeholder="Content Key (e.g., title, description)" value={newContent.content_key} onChange={(e) => setNewContent({ ...newContent, content_key: e.target.value })} />
                     <Select value={newContent.content_type} onValueChange={(v) => setNewContent({ ...newContent, content_type: v })}>
