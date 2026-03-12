@@ -478,6 +478,14 @@ const Admin = () => {
             <p className="text-muted-foreground text-xs">{user?.email}</p>
           </div>
           <div className="flex gap-2">
+            <Button
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              variant="outline"
+              size="sm"
+              title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+            >
+              {resolvedTheme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             <Button asChild variant="outline" size="sm">
               <a href="/" target="_blank">
                 <Globe className="w-4 h-4 mr-1" />View Site
