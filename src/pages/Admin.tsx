@@ -84,7 +84,7 @@ const Admin = () => {
   const [verifyingCode, setVerifyingCode] = useState(false);
   const [contentFilterPage, setContentFilterPage] = useState("all");
   const [contentFilterSection, setContentFilterSection] = useState("");
-  const { theme, resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const { toast } = useToast();
 
   // Data states
