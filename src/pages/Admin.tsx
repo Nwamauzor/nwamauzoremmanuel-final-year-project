@@ -106,36 +106,25 @@ const Admin = () => {
 
   const checkAdminRole = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      // Check localStorage cache first
-      const savedUid = localStorage.getItem(ADMIN_VERIFIED_KEY);
-      if (savedUid === userId) {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", userId)
-          .eq("role", "admin")
-          .maybeSingle();
-        if (data) {
-          setIsAdmin(true);
-          return true;
-        }
-        localStorage.removeItem(ADMIN_VERIFIED_KEY);
-      } else {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", userId)
-          .eq("role", "admin")
-          .maybeSingle();
-        if (data) {
-          localStorage.setItem(ADMIN_VERIFIED_KEY, userId);
-          setIsAdmin(true);
-          return true;
-        }
+      const savedUid = safeStorage.get(ADMIN_VERIFIED_KEY);
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (data) {
+        if (savedUid !== userId) safeStorage.set(ADMIN_VERIFIED_KEY, userId);
+        setIsAdmin(true);
+        return true;
       }
+
+      safeStorage.remove(ADMIN_VERIFIED_KEY);
     } catch (e) {
       console.error("Admin check error:", e);
     }
+
     setIsAdmin(false);
     return false;
   }, []);
