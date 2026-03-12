@@ -250,9 +250,10 @@ const Chatbot = () => {
     // Build context with location if available
     let contextContent = `[Context: User is currently viewing ${location.pathname}.`;
     if (userLocation) {
-      contextContent += ` User location: lat ${userLocation.lat}, lng ${userLocation.lng}.`;
+      const mapsLink = `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/7.4441,3.8997`;
+      contextContent += ` User location: lat ${userLocation.lat}, lng ${userLocation.lng}. Precomputed directions link: ${mapsLink}.`;
     }
-    contextContent += ` Provide contextual recommendations when relevant.]`;
+    contextContent += " Provide contextual recommendations when relevant.]";
 
     const contextMsg: Msg = { role: "user", content: contextContent };
 
