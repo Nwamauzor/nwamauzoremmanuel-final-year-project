@@ -259,54 +259,76 @@ const Admin = () => {
       return;
     }
 
+    if (!user?.id) {
+      toast({ title: "Error", description: "Not authenticated. Please sign in again.", variant: "destructive" });
+      return;
+    }
+
     setVerifyingCode(true);
     try {
-      const sessionResult: any = await Promise.race([
-        supabase.auth.getSession(),
-        new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Session check timed out. Please refresh and try again.")), 2500);
-        }),
-      ]);
-
-      const session = sessionResult?.data?.session;
-      if (!session?.access_token) {
-        toast({ title: "Error", description: "Not authenticated. Please sign in again.", variant: "destructive" });
-        return;
-      }
-
-      const alreadyAdmin = await checkAdminRole(session.user.id);
+      const alreadyAdmin = await checkAdminRole(user.id);
       if (alreadyAdmin) {
+        setAccessCode("");
+        await Promise.all([loadStaff(), loadCourses(), loadTimetable(), loadSiteContent(), loadJournals()]);
         toast({ title: "Admin access active", description: "Welcome back to your dashboard." });
         return;
       }
 
-      const resp: any = await Promise.race([
-        supabase.functions.invoke("admin-setup", {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        throw sessionError;
+      }
+
+      const session = sessionData.session;
+      if (!session?.access_token) {
+        const { data: refreshedData, error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError || !refreshedData.session?.access_token) {
+          throw new Error("Session unavailable. Please sign in again.");
+        }
+
+        const refreshedResp = await supabase.functions.invoke("admin-setup", {
           body: { access_code: normalizedCode },
           headers: {
-            Authorization: `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${refreshedData.session.access_token}`,
           },
-        }),
-        new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Verification timed out. Please try again.")), 4500);
-        }),
-      ]);
+        });
 
-      if (resp.error) {
-        toast({ title: "Access Denied", description: resp.error.message || "Invalid access code", variant: "destructive" });
-      } else if (resp.data?.success) {
-        safeStorage.set(ADMIN_VERIFIED_KEY, session.user.id);
+        if (refreshedResp.error) {
+          throw new Error(refreshedResp.error.message || "Invalid access code");
+        }
+
+        if (!refreshedResp.data?.success) {
+          throw new Error(refreshedResp.data?.error || "Invalid access code");
+        }
+
+        safeStorage.set(ADMIN_VERIFIED_KEY, refreshedData.session.user.id);
         setIsAdmin(true);
         setAccessCode("");
-        loadStaff();
-        loadCourses();
-        loadTimetable();
-        loadSiteContent();
-        loadJournals();
+        await Promise.all([loadStaff(), loadCourses(), loadTimetable(), loadSiteContent(), loadJournals()]);
         toast({ title: "✅ Admin Access Granted", description: "Dashboard unlocked!" });
-      } else {
-        toast({ title: "Access Denied", description: resp.data?.error || "Invalid access code", variant: "destructive" });
+        return;
       }
+
+      const resp = await supabase.functions.invoke("admin-setup", {
+        body: { access_code: normalizedCode },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (resp.error) {
+        throw new Error(resp.error.message || "Invalid access code");
+      }
+
+      if (!resp.data?.success) {
+        throw new Error(resp.data?.error || "Invalid access code");
+      }
+
+      safeStorage.set(ADMIN_VERIFIED_KEY, session.user.id);
+      setIsAdmin(true);
+      setAccessCode("");
+      await Promise.all([loadStaff(), loadCourses(), loadTimetable(), loadSiteContent(), loadJournals()]);
+      toast({ title: "✅ Admin Access Granted", description: "Dashboard unlocked!" });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to verify code";
       toast({ title: "Error", description: message, variant: "destructive" });
