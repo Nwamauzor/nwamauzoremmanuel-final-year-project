@@ -636,23 +636,50 @@ const Admin = () => {
                       <Table>
                         <TableHeader>
                           <TableRow>
+                            <TableHead className="text-xs hidden lg:table-cell">Page</TableHead>
+                            <TableHead className="text-xs hidden md:table-cell">Section</TableHead>
                             <TableHead className="text-xs">Key</TableHead>
-                            <TableHead className="text-xs">Value</TableHead>
                             <TableHead className="text-xs hidden sm:table-cell">Type</TableHead>
+                            <TableHead className="text-xs hidden sm:table-cell">Order</TableHead>
+                            <TableHead className="text-xs">Value</TableHead>
                             <TableHead className="text-xs w-20">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {items.map((item: any) => (
                             <TableRow key={item.id}>
-                              <TableCell className="text-xs font-mono">{editingId === item.id ?
-                                <Input value={editData.content_key || ""} onChange={(e) => setEditData({ ...editData, content_key: e.target.value })} className="h-8 text-xs" /> : item.content_key
-                              }</TableCell>
-                              <TableCell className="text-xs max-w-[300px]">{editingId === item.id ?
-                                <Textarea value={editData.content_value || ""} onChange={(e) => setEditData({ ...editData, content_value: e.target.value })} className="text-xs min-h-[60px]" /> :
-                                <span className="truncate block">{item.content_value.slice(0, 100)}{item.content_value.length > 100 ? "..." : ""}</span>
-                              }</TableCell>
-                              <TableCell className="text-xs hidden sm:table-cell">{item.content_type}</TableCell>
+                              <TableCell className="text-xs font-mono hidden lg:table-cell">
+                                {editingId === item.id ? (
+                                  <Input value={editData.page || ""} onChange={(e) => setEditData({ ...editData, page: e.target.value.trim().toLowerCase() })} className="h-8 text-xs" />
+                                ) : item.page}
+                              </TableCell>
+                              <TableCell className="text-xs hidden md:table-cell">
+                                {editingId === item.id ? (
+                                  <Input value={editData.section || ""} onChange={(e) => setEditData({ ...editData, section: e.target.value })} className="h-8 text-xs" />
+                                ) : item.section}
+                              </TableCell>
+                              <TableCell className="text-xs font-mono">
+                                {editingId === item.id ? (
+                                  <Input value={editData.content_key || ""} onChange={(e) => setEditData({ ...editData, content_key: e.target.value })} className="h-8 text-xs" />
+                                ) : item.content_key}
+                              </TableCell>
+                              <TableCell className="text-xs hidden sm:table-cell">
+                                {editingId === item.id ? (
+                                  <Input value={editData.content_type || "text"} onChange={(e) => setEditData({ ...editData, content_type: e.target.value })} className="h-8 text-xs" />
+                                ) : item.content_type}
+                              </TableCell>
+                              <TableCell className="text-xs hidden sm:table-cell">
+                                {editingId === item.id ? (
+                                  <Input type="number" value={editData.sort_order ?? 0} onChange={(e) => setEditData({ ...editData, sort_order: parseInt(e.target.value) || 0 })} className="h-8 text-xs w-20" />
+                                ) : item.sort_order}
+                              </TableCell>
+                              <TableCell className="text-xs max-w-[420px]">
+                                {editingId === item.id ? (
+                                  <Textarea value={editData.content_value || ""} onChange={(e) => setEditData({ ...editData, content_value: e.target.value })} className="text-xs min-h-[90px]" />
+                                ) : (
+                                  <span className="whitespace-pre-wrap break-words">{item.content_value}</span>
+                                )}
+                              </TableCell>
                               <TableCell>
                                 <ActionButtons item={item} table="site_content" loadFn={loadSiteContent} nameField="content_key" />
                               </TableCell>
