@@ -930,6 +930,7 @@ const Admin = () => {
                         <TableCell className="text-xs hidden sm:table-cell">{editingId === j.id ? <Input value={editData.volume || ""} onChange={(e) => setEditData({ ...editData, volume: e.target.value })} className="h-8 text-xs" /> : j.volume}</TableCell>
                         <TableCell className="text-xs hidden sm:table-cell">{editingId === j.id ? <Input value={editData.issue || ""} onChange={(e) => setEditData({ ...editData, issue: e.target.value })} className="h-8 text-xs" /> : j.issue}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">{editingId === j.id ? <Input type="number" value={editData.year || ""} onChange={(e) => setEditData({ ...editData, year: parseInt(e.target.value) || null })} className="h-8 text-xs w-20" /> : j.year}</TableCell>
+                        <TableCell className="text-xs hidden lg:table-cell max-w-[280px]">{editingId === j.id ? <Textarea value={editData.description || ""} onChange={(e) => setEditData({ ...editData, description: e.target.value })} className="text-xs min-h-[70px]" /> : <span className="whitespace-pre-wrap break-words">{j.description || "—"}</span>}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">
                           {j.file_url ? <a href={j.file_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{j.file_name || "View"}</a> : "—"}
                         </TableCell>
