@@ -151,18 +151,22 @@ const Admin = () => {
       }
     });
 
-    // Also listen for auth changes (handles OAuth redirects, token refresh)
+    // Also listen for auth changes (handles sign in/out cleanly)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
       const currentUser = session?.user ?? null;
-      
-      // For subsequent changes after initial load
+
+      // For subsequent changes after initial load, avoid redundant role checks on token refresh.
       if (resolved) {
         setUser(currentUser);
-        if (currentUser) {
-          await checkAdminRole(currentUser.id);
-        } else {
+        if (!currentUser) {
           setIsAdmin(false);
+          safeStorage.remove(ADMIN_VERIFIED_KEY);
+          return;
+        }
+
+        if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+          await checkAdminRole(currentUser.id);
         }
       } else {
         resolveAuth(currentUser);
