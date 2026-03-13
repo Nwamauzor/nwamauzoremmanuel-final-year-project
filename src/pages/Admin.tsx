@@ -889,7 +889,7 @@ const Admin = () => {
                         <TableCell className="text-xs font-mono">{editingId === t.id ? <Input value={editData.course_code || ""} onChange={(e) => setEditData({ ...editData, course_code: e.target.value })} className="h-8 text-xs" /> : t.course_code}</TableCell>
                         <TableCell className="text-xs hidden sm:table-cell">{editingId === t.id ? <Input value={editData.venue || ""} onChange={(e) => setEditData({ ...editData, venue: e.target.value })} className="h-8 text-xs" /> : t.venue}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">{editingId === t.id ? <Input value={editData.lecturer || ""} onChange={(e) => setEditData({ ...editData, lecturer: e.target.value })} className="h-8 text-xs" /> : t.lecturer}</TableCell>
-                        <TableCell className="text-xs hidden lg:table-cell">{t.department}</TableCell>
+                        <TableCell className="text-xs hidden lg:table-cell">{editingId === t.id ? <Input value={editData.department || ""} onChange={(e) => setEditData({ ...editData, department: e.target.value })} className="h-8 text-xs" /> : t.department}</TableCell>
                         <TableCell><ActionButtons item={t} table="admin_timetable" loadFn={loadTimetable} nameField="course_code" /></TableCell>
                       </TableRow>
                     ))}
