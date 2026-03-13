@@ -667,7 +667,7 @@ const Chatbot = () => {
                   </Button>
                 </form>
                 <p className="text-[9px] sm:text-[10px] text-muted-foreground text-center mt-1.5">
-                  Gandus AI • Faculty of Computing, University of Ibadan
+                  Gadus AI • Faculty of Computing, University of Ibadan
                 </p>
               </div>
             )}
