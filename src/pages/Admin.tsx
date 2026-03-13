@@ -823,10 +823,10 @@ const Admin = () => {
                         <TableCell className="text-xs font-mono">{editingId === c.id ? <Input value={editData.code || ""} onChange={(e) => setEditData({ ...editData, code: e.target.value })} className="h-8 text-xs" /> : c.code}</TableCell>
                         <TableCell className="text-xs">{editingId === c.id ? <Input value={editData.title || ""} onChange={(e) => setEditData({ ...editData, title: e.target.value })} className="h-8 text-xs" /> : c.title}</TableCell>
                         <TableCell className="text-xs hidden sm:table-cell">{editingId === c.id ? <Input type="number" value={editData.unit || 2} onChange={(e) => setEditData({ ...editData, unit: parseInt(e.target.value) || 2 })} className="h-8 text-xs w-16" /> : c.unit}</TableCell>
-                        <TableCell className="text-xs hidden sm:table-cell">{c.status}</TableCell>
-                        <TableCell className="text-xs hidden md:table-cell">{c.level}</TableCell>
-                        <TableCell className="text-xs hidden md:table-cell">{c.semester}</TableCell>
-                        <TableCell className="text-xs hidden lg:table-cell">{c.department}</TableCell>
+                        <TableCell className="text-xs hidden sm:table-cell">{editingId === c.id ? <Input value={editData.status || "Compulsory"} onChange={(e) => setEditData({ ...editData, status: e.target.value })} className="h-8 text-xs" /> : c.status}</TableCell>
+                        <TableCell className="text-xs hidden md:table-cell">{editingId === c.id ? <Input value={editData.level || "100L"} onChange={(e) => setEditData({ ...editData, level: e.target.value })} className="h-8 text-xs" /> : c.level}</TableCell>
+                        <TableCell className="text-xs hidden md:table-cell">{editingId === c.id ? <Input value={editData.semester || "first"} onChange={(e) => setEditData({ ...editData, semester: e.target.value })} className="h-8 text-xs" /> : c.semester}</TableCell>
+                        <TableCell className="text-xs hidden lg:table-cell">{editingId === c.id ? <Input value={editData.department || ""} onChange={(e) => setEditData({ ...editData, department: e.target.value })} className="h-8 text-xs" /> : c.department}</TableCell>
                         <TableCell><ActionButtons item={c} table="admin_courses" loadFn={loadCourses} nameField="code" /></TableCell>
                       </TableRow>
                     ))}
