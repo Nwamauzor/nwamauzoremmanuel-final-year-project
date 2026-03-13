@@ -748,7 +748,7 @@ const Admin = () => {
                         <TableCell className="text-xs sm:text-sm">{editingId === s.id ? <Input value={editData.designation || ""} onChange={(e) => setEditData({ ...editData, designation: e.target.value })} className="h-8 text-xs" /> : s.designation}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">{editingId === s.id ? <Input value={editData.specialization || ""} onChange={(e) => setEditData({ ...editData, specialization: e.target.value })} className="h-8 text-xs" /> : s.specialization}</TableCell>
                         <TableCell className="text-xs hidden lg:table-cell">{editingId === s.id ? <Input value={editData.department || ""} onChange={(e) => setEditData({ ...editData, department: e.target.value })} className="h-8 text-xs" /> : s.department}</TableCell>
-                        <TableCell className="text-xs hidden sm:table-cell">{s.staff_type}</TableCell>
+                        <TableCell className="text-xs hidden sm:table-cell">{editingId === s.id ? <Input value={editData.staff_type || "academic"} onChange={(e) => setEditData({ ...editData, staff_type: e.target.value })} className="h-8 text-xs" /> : s.staff_type}</TableCell>
                         <TableCell><ActionButtons item={s} table="admin_staff" loadFn={loadStaff} /></TableCell>
                       </TableRow>
                     ))}
