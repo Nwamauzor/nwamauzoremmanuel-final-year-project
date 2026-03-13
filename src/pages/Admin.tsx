@@ -918,6 +918,7 @@ const Admin = () => {
                       <TableHead className="text-xs hidden sm:table-cell">Volume</TableHead>
                       <TableHead className="text-xs hidden sm:table-cell">Issue</TableHead>
                       <TableHead className="text-xs hidden md:table-cell">Year</TableHead>
+                      <TableHead className="text-xs hidden lg:table-cell">Description</TableHead>
                       <TableHead className="text-xs hidden md:table-cell">File</TableHead>
                       <TableHead className="text-xs w-20">Actions</TableHead>
                     </TableRow>
