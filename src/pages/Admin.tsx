@@ -151,18 +151,22 @@ const Admin = () => {
       }
     });
 
-    // Also listen for auth changes (handles OAuth redirects, token refresh)
+    // Also listen for auth changes (handles sign in/out cleanly)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
       const currentUser = session?.user ?? null;
-      
-      // For subsequent changes after initial load
+
+      // For subsequent changes after initial load, avoid redundant role checks on token refresh.
       if (resolved) {
         setUser(currentUser);
-        if (currentUser) {
-          await checkAdminRole(currentUser.id);
-        } else {
+        if (!currentUser) {
           setIsAdmin(false);
+          safeStorage.remove(ADMIN_VERIFIED_KEY);
+          return;
+        }
+
+        if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+          await checkAdminRole(currentUser.id);
         }
       } else {
         resolveAuth(currentUser);
@@ -255,54 +259,76 @@ const Admin = () => {
       return;
     }
 
+    if (!user?.id) {
+      toast({ title: "Error", description: "Not authenticated. Please sign in again.", variant: "destructive" });
+      return;
+    }
+
     setVerifyingCode(true);
     try {
-      const sessionResult: any = await Promise.race([
-        supabase.auth.getSession(),
-        new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Session check timed out. Please refresh and try again.")), 2500);
-        }),
-      ]);
-
-      const session = sessionResult?.data?.session;
-      if (!session?.access_token) {
-        toast({ title: "Error", description: "Not authenticated. Please sign in again.", variant: "destructive" });
-        return;
-      }
-
-      const alreadyAdmin = await checkAdminRole(session.user.id);
+      const alreadyAdmin = await checkAdminRole(user.id);
       if (alreadyAdmin) {
+        setAccessCode("");
+        await Promise.all([loadStaff(), loadCourses(), loadTimetable(), loadSiteContent(), loadJournals()]);
         toast({ title: "Admin access active", description: "Welcome back to your dashboard." });
         return;
       }
 
-      const resp: any = await Promise.race([
-        supabase.functions.invoke("admin-setup", {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        throw sessionError;
+      }
+
+      const session = sessionData.session;
+      if (!session?.access_token) {
+        const { data: refreshedData, error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError || !refreshedData.session?.access_token) {
+          throw new Error("Session unavailable. Please sign in again.");
+        }
+
+        const refreshedResp = await supabase.functions.invoke("admin-setup", {
           body: { access_code: normalizedCode },
           headers: {
-            Authorization: `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${refreshedData.session.access_token}`,
           },
-        }),
-        new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Verification timed out. Please try again.")), 4500);
-        }),
-      ]);
+        });
 
-      if (resp.error) {
-        toast({ title: "Access Denied", description: resp.error.message || "Invalid access code", variant: "destructive" });
-      } else if (resp.data?.success) {
-        safeStorage.set(ADMIN_VERIFIED_KEY, session.user.id);
+        if (refreshedResp.error) {
+          throw new Error(refreshedResp.error.message || "Invalid access code");
+        }
+
+        if (!refreshedResp.data?.success) {
+          throw new Error(refreshedResp.data?.error || "Invalid access code");
+        }
+
+        safeStorage.set(ADMIN_VERIFIED_KEY, refreshedData.session.user.id);
         setIsAdmin(true);
         setAccessCode("");
-        loadStaff();
-        loadCourses();
-        loadTimetable();
-        loadSiteContent();
-        loadJournals();
+        await Promise.all([loadStaff(), loadCourses(), loadTimetable(), loadSiteContent(), loadJournals()]);
         toast({ title: "✅ Admin Access Granted", description: "Dashboard unlocked!" });
-      } else {
-        toast({ title: "Access Denied", description: resp.data?.error || "Invalid access code", variant: "destructive" });
+        return;
       }
+
+      const resp = await supabase.functions.invoke("admin-setup", {
+        body: { access_code: normalizedCode },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (resp.error) {
+        throw new Error(resp.error.message || "Invalid access code");
+      }
+
+      if (!resp.data?.success) {
+        throw new Error(resp.data?.error || "Invalid access code");
+      }
+
+      safeStorage.set(ADMIN_VERIFIED_KEY, session.user.id);
+      setIsAdmin(true);
+      setAccessCode("");
+      await Promise.all([loadStaff(), loadCourses(), loadTimetable(), loadSiteContent(), loadJournals()]);
+      toast({ title: "✅ Admin Access Granted", description: "Dashboard unlocked!" });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to verify code";
       toast({ title: "Error", description: message, variant: "destructive" });
@@ -493,7 +519,8 @@ const Admin = () => {
               size="sm"
               title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
             >
-              {resolvedTheme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {resolvedTheme === "dark" ? <Sun className="w-4 h-4 mr-1" /> : <Moon className="w-4 h-4 mr-1" />}
+              {resolvedTheme === "dark" ? "Light" : "Dark"}
             </Button>
             <Button asChild variant="outline" size="sm">
               <a href="/" target="_blank">
@@ -610,23 +637,50 @@ const Admin = () => {
                       <Table>
                         <TableHeader>
                           <TableRow>
+                            <TableHead className="text-xs hidden lg:table-cell">Page</TableHead>
+                            <TableHead className="text-xs hidden md:table-cell">Section</TableHead>
                             <TableHead className="text-xs">Key</TableHead>
-                            <TableHead className="text-xs">Value</TableHead>
                             <TableHead className="text-xs hidden sm:table-cell">Type</TableHead>
+                            <TableHead className="text-xs hidden sm:table-cell">Order</TableHead>
+                            <TableHead className="text-xs">Value</TableHead>
                             <TableHead className="text-xs w-20">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {items.map((item: any) => (
                             <TableRow key={item.id}>
-                              <TableCell className="text-xs font-mono">{editingId === item.id ?
-                                <Input value={editData.content_key || ""} onChange={(e) => setEditData({ ...editData, content_key: e.target.value })} className="h-8 text-xs" /> : item.content_key
-                              }</TableCell>
-                              <TableCell className="text-xs max-w-[300px]">{editingId === item.id ?
-                                <Textarea value={editData.content_value || ""} onChange={(e) => setEditData({ ...editData, content_value: e.target.value })} className="text-xs min-h-[60px]" /> :
-                                <span className="truncate block">{item.content_value.slice(0, 100)}{item.content_value.length > 100 ? "..." : ""}</span>
-                              }</TableCell>
-                              <TableCell className="text-xs hidden sm:table-cell">{item.content_type}</TableCell>
+                              <TableCell className="text-xs font-mono hidden lg:table-cell">
+                                {editingId === item.id ? (
+                                  <Input value={editData.page || ""} onChange={(e) => setEditData({ ...editData, page: e.target.value.trim().toLowerCase() })} className="h-8 text-xs" />
+                                ) : item.page}
+                              </TableCell>
+                              <TableCell className="text-xs hidden md:table-cell">
+                                {editingId === item.id ? (
+                                  <Input value={editData.section || ""} onChange={(e) => setEditData({ ...editData, section: e.target.value })} className="h-8 text-xs" />
+                                ) : item.section}
+                              </TableCell>
+                              <TableCell className="text-xs font-mono">
+                                {editingId === item.id ? (
+                                  <Input value={editData.content_key || ""} onChange={(e) => setEditData({ ...editData, content_key: e.target.value })} className="h-8 text-xs" />
+                                ) : item.content_key}
+                              </TableCell>
+                              <TableCell className="text-xs hidden sm:table-cell">
+                                {editingId === item.id ? (
+                                  <Input value={editData.content_type || "text"} onChange={(e) => setEditData({ ...editData, content_type: e.target.value })} className="h-8 text-xs" />
+                                ) : item.content_type}
+                              </TableCell>
+                              <TableCell className="text-xs hidden sm:table-cell">
+                                {editingId === item.id ? (
+                                  <Input type="number" value={editData.sort_order ?? 0} onChange={(e) => setEditData({ ...editData, sort_order: parseInt(e.target.value) || 0 })} className="h-8 text-xs w-20" />
+                                ) : item.sort_order}
+                              </TableCell>
+                              <TableCell className="text-xs max-w-[420px]">
+                                {editingId === item.id ? (
+                                  <Textarea value={editData.content_value || ""} onChange={(e) => setEditData({ ...editData, content_value: e.target.value })} className="text-xs min-h-[90px]" />
+                                ) : (
+                                  <span className="whitespace-pre-wrap break-words">{item.content_value}</span>
+                                )}
+                              </TableCell>
                               <TableCell>
                                 <ActionButtons item={item} table="site_content" loadFn={loadSiteContent} nameField="content_key" />
                               </TableCell>
@@ -695,7 +749,7 @@ const Admin = () => {
                         <TableCell className="text-xs sm:text-sm">{editingId === s.id ? <Input value={editData.designation || ""} onChange={(e) => setEditData({ ...editData, designation: e.target.value })} className="h-8 text-xs" /> : s.designation}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">{editingId === s.id ? <Input value={editData.specialization || ""} onChange={(e) => setEditData({ ...editData, specialization: e.target.value })} className="h-8 text-xs" /> : s.specialization}</TableCell>
                         <TableCell className="text-xs hidden lg:table-cell">{editingId === s.id ? <Input value={editData.department || ""} onChange={(e) => setEditData({ ...editData, department: e.target.value })} className="h-8 text-xs" /> : s.department}</TableCell>
-                        <TableCell className="text-xs hidden sm:table-cell">{s.staff_type}</TableCell>
+                        <TableCell className="text-xs hidden sm:table-cell">{editingId === s.id ? <Input value={editData.staff_type || "academic"} onChange={(e) => setEditData({ ...editData, staff_type: e.target.value })} className="h-8 text-xs" /> : s.staff_type}</TableCell>
                         <TableCell><ActionButtons item={s} table="admin_staff" loadFn={loadStaff} /></TableCell>
                       </TableRow>
                     ))}
@@ -770,10 +824,10 @@ const Admin = () => {
                         <TableCell className="text-xs font-mono">{editingId === c.id ? <Input value={editData.code || ""} onChange={(e) => setEditData({ ...editData, code: e.target.value })} className="h-8 text-xs" /> : c.code}</TableCell>
                         <TableCell className="text-xs">{editingId === c.id ? <Input value={editData.title || ""} onChange={(e) => setEditData({ ...editData, title: e.target.value })} className="h-8 text-xs" /> : c.title}</TableCell>
                         <TableCell className="text-xs hidden sm:table-cell">{editingId === c.id ? <Input type="number" value={editData.unit || 2} onChange={(e) => setEditData({ ...editData, unit: parseInt(e.target.value) || 2 })} className="h-8 text-xs w-16" /> : c.unit}</TableCell>
-                        <TableCell className="text-xs hidden sm:table-cell">{c.status}</TableCell>
-                        <TableCell className="text-xs hidden md:table-cell">{c.level}</TableCell>
-                        <TableCell className="text-xs hidden md:table-cell">{c.semester}</TableCell>
-                        <TableCell className="text-xs hidden lg:table-cell">{c.department}</TableCell>
+                        <TableCell className="text-xs hidden sm:table-cell">{editingId === c.id ? <Input value={editData.status || "Compulsory"} onChange={(e) => setEditData({ ...editData, status: e.target.value })} className="h-8 text-xs" /> : c.status}</TableCell>
+                        <TableCell className="text-xs hidden md:table-cell">{editingId === c.id ? <Input value={editData.level || "100L"} onChange={(e) => setEditData({ ...editData, level: e.target.value })} className="h-8 text-xs" /> : c.level}</TableCell>
+                        <TableCell className="text-xs hidden md:table-cell">{editingId === c.id ? <Input value={editData.semester || "first"} onChange={(e) => setEditData({ ...editData, semester: e.target.value })} className="h-8 text-xs" /> : c.semester}</TableCell>
+                        <TableCell className="text-xs hidden lg:table-cell">{editingId === c.id ? <Input value={editData.department || ""} onChange={(e) => setEditData({ ...editData, department: e.target.value })} className="h-8 text-xs" /> : c.department}</TableCell>
                         <TableCell><ActionButtons item={c} table="admin_courses" loadFn={loadCourses} nameField="code" /></TableCell>
                       </TableRow>
                     ))}
@@ -836,7 +890,7 @@ const Admin = () => {
                         <TableCell className="text-xs font-mono">{editingId === t.id ? <Input value={editData.course_code || ""} onChange={(e) => setEditData({ ...editData, course_code: e.target.value })} className="h-8 text-xs" /> : t.course_code}</TableCell>
                         <TableCell className="text-xs hidden sm:table-cell">{editingId === t.id ? <Input value={editData.venue || ""} onChange={(e) => setEditData({ ...editData, venue: e.target.value })} className="h-8 text-xs" /> : t.venue}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">{editingId === t.id ? <Input value={editData.lecturer || ""} onChange={(e) => setEditData({ ...editData, lecturer: e.target.value })} className="h-8 text-xs" /> : t.lecturer}</TableCell>
-                        <TableCell className="text-xs hidden lg:table-cell">{t.department}</TableCell>
+                        <TableCell className="text-xs hidden lg:table-cell">{editingId === t.id ? <Input value={editData.department || ""} onChange={(e) => setEditData({ ...editData, department: e.target.value })} className="h-8 text-xs" /> : t.department}</TableCell>
                         <TableCell><ActionButtons item={t} table="admin_timetable" loadFn={loadTimetable} nameField="course_code" /></TableCell>
                       </TableRow>
                     ))}
@@ -865,6 +919,7 @@ const Admin = () => {
                       <TableHead className="text-xs hidden sm:table-cell">Volume</TableHead>
                       <TableHead className="text-xs hidden sm:table-cell">Issue</TableHead>
                       <TableHead className="text-xs hidden md:table-cell">Year</TableHead>
+                      <TableHead className="text-xs hidden lg:table-cell">Description</TableHead>
                       <TableHead className="text-xs hidden md:table-cell">File</TableHead>
                       <TableHead className="text-xs w-20">Actions</TableHead>
                     </TableRow>
@@ -876,6 +931,7 @@ const Admin = () => {
                         <TableCell className="text-xs hidden sm:table-cell">{editingId === j.id ? <Input value={editData.volume || ""} onChange={(e) => setEditData({ ...editData, volume: e.target.value })} className="h-8 text-xs" /> : j.volume}</TableCell>
                         <TableCell className="text-xs hidden sm:table-cell">{editingId === j.id ? <Input value={editData.issue || ""} onChange={(e) => setEditData({ ...editData, issue: e.target.value })} className="h-8 text-xs" /> : j.issue}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">{editingId === j.id ? <Input type="number" value={editData.year || ""} onChange={(e) => setEditData({ ...editData, year: parseInt(e.target.value) || null })} className="h-8 text-xs w-20" /> : j.year}</TableCell>
+                        <TableCell className="text-xs hidden lg:table-cell max-w-[280px]">{editingId === j.id ? <Textarea value={editData.description || ""} onChange={(e) => setEditData({ ...editData, description: e.target.value })} className="text-xs min-h-[70px]" /> : <span className="whitespace-pre-wrap break-words">{j.description || "—"}</span>}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">
                           {j.file_url ? <a href={j.file_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{j.file_name || "View"}</a> : "—"}
                         </TableCell>
