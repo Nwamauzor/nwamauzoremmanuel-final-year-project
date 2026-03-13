@@ -382,7 +382,7 @@ const Chatbot = () => {
                   <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <h3 className="font-display font-bold text-xs sm:text-sm">Gandus AI</h3>
+                  <h3 className="font-display font-bold text-xs sm:text-sm">Gadus AI</h3>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                     <p className="text-[10px] sm:text-xs opacity-90">
