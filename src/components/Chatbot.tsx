@@ -350,8 +350,8 @@ const Chatbot = () => {
             whileTap={{ scale: 0.95 }}
           >
             <GraduationCap className="w-5 h-5" />
-            <span className="font-semibold text-sm hidden sm:inline">Gandus AI</span>
-            <span className="font-semibold text-xs sm:hidden">Gandus</span>
+            <span className="font-semibold text-sm hidden sm:inline">Gadus AI</span>
+            <span className="font-semibold text-xs sm:hidden">Gadus</span>
             <motion.span
               className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-accent border-2 border-primary"
               animate={{ scale: [1, 1.3, 1] }}
@@ -382,7 +382,7 @@ const Chatbot = () => {
                   <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <h3 className="font-display font-bold text-xs sm:text-sm">Gandus AI</h3>
+                  <h3 className="font-display font-bold text-xs sm:text-sm">Gadus AI</h3>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                     <p className="text-[10px] sm:text-xs opacity-90">
@@ -519,7 +519,7 @@ const Chatbot = () => {
                         <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                       </div>
                       <div className="bg-muted rounded-2xl rounded-tl-sm p-3 sm:p-4 text-sm text-foreground max-w-[85%] leading-relaxed">
-                        👋 Hi! I'm <strong>Gandus AI</strong>, your academic assistant. I can help with:
+                        👋 Hi! I'm <strong>Gadus AI</strong>, your academic assistant. I can help with:
                         <ul className="mt-2 space-y-1 text-muted-foreground text-xs sm:text-sm">
                           <li>📚 Faculty info & admissions</li>
                           <li>🎓 Academic guidance & study tips</li>
@@ -667,7 +667,7 @@ const Chatbot = () => {
                   </Button>
                 </form>
                 <p className="text-[9px] sm:text-[10px] text-muted-foreground text-center mt-1.5">
-                  Gandus AI • Faculty of Computing, University of Ibadan
+                  Gadus AI • Faculty of Computing, University of Ibadan
                 </p>
               </div>
             )}
