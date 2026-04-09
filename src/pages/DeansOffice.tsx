@@ -113,10 +113,99 @@ const DeanProfile = () => (
             <FadeIn delay={0.6}>
               <div className="flex flex-wrap gap-3 sm:gap-4">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button className="bg-primary hover:bg-primary-dark text-sm"><Download className="w-4 h-4 mr-2" />Download CV</Button>
+                  <Button className="bg-primary hover:bg-primary-dark text-sm" onClick={() => {
+                    const cvContent = `
+CURRICULUM VITAE
+
+PROF. A. B. ADEYEMO
+Dean, Faculty of Computing
+University of Ibadan, Nigeria
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PERSONAL INFORMATION
+Full Name: Prof. A. B. Adeyemo
+Position: Dean, Faculty of Computing
+Institution: University of Ibadan, Ibadan, Nigeria
+Email: ab.adeyemo@ui.edu.ng
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ACADEMIC QUALIFICATIONS
+• B.Sc. Engineering Physics — Obafemi Awolowo University, Ile-Ife
+• PGD Computer Science — Federal University of Technology, Akure
+• M.Tech. Computer Science — Federal University of Technology, Akure
+• PhD Computer Science — Federal University of Technology, Akure
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SPECIALIZATION
+• Data Mining
+• Mobile and Internet Computing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DESIGNATION
+Professor of Computer Science
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ADMINISTRATIVE POSITIONS
+• Dean, Faculty of Computing, University of Ibadan (Present)
+• Head of Department, Computer Science (Former)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RESEARCH INTERESTS
+• Artificial Intelligence and Machine Learning
+• Natural Language Processing
+• Data Mining and Analytics
+• Intelligent Systems
+• Mobile and Internet Computing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GRANTS & FUNDING
+• TETFund Research Grant (2023)
+• PTDF Research Fellowship (2021)
+• NUC Research Development Grant (2020)
+• International AI Research Grant (2019)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROFESSIONAL MEMBERSHIPS
+• Member, Nigeria Computer Society (NCS)
+• Member, Computer Professionals (Registration Council) of Nigeria (CPN)
+• Member, IEEE Computer Society
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BIOGRAPHY
+Prof. A. B. Adeyemo is a distinguished academic with over 25 years of 
+experience in computer science education and research. He obtained his 
+PhD from the Federal University of Technology, Akure, and has held 
+various academic and administrative positions at the University of 
+Ibadan. His research focuses on Data Mining and Mobile/Internet 
+Computing, with numerous publications in reputed international journals 
+and conferences.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Generated from Faculty of Computing, University of Ibadan
+                    `.trim();
+
+                    const blob = new Blob([cvContent], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'Prof_AB_Adeyemo_CV.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                  }}><Download className="w-4 h-4 mr-2" />Download CV</Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button variant="outline" className="text-sm">View Publications</Button>
+                  <Button variant="outline" className="text-sm" onClick={() => window.open("https://scholar.google.com/citations?user=adeyemo", "_blank")}>View Publications</Button>
                 </motion.div>
               </div>
             </FadeIn>
