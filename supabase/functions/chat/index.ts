@@ -219,6 +219,40 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    // Extract latest user question for knowledge lookup
+    const lastUserMsg = [...messages].reverse().find((m: any) => m.role === "user");
+    let knowledgeContext = "";
+
+    if (lastUserMsg) {
+      try {
+        // Search for similar past Q&A in knowledge base
+        const searchQuery = lastUserMsg.content.slice(0, 200);
+        const searchRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/chat_knowledge?question=fts.${encodeURIComponent(searchQuery)}&limit=3&order=usage_count.desc`,
+          {
+            headers: {
+              apikey: SUPABASE_SERVICE_ROLE_KEY,
+              Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            },
+          }
+        );
+        if (searchRes.ok) {
+          const knowledge = await searchRes.json();
+          if (knowledge.length > 0) {
+            knowledgeContext = "\n\n[KNOWLEDGE FROM PRIOR INTERACTIONS - Use these to give better, more refined answers:]\n" +
+              knowledge.map((k: any) => `Q: ${k.question.slice(0, 100)}\nA: ${k.answer.slice(0, 300)}`).join("\n---\n");
+          }
+        }
+      } catch (e) {
+        console.error("Knowledge lookup error:", e);
+      }
+    }
+
+    const systemWithKnowledge = SYSTEM_PROMPT + knowledgeContext;
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -228,7 +262,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: systemWithKnowledge },
           ...messages,
         ],
         stream: true,
@@ -250,6 +284,60 @@ serve(async (req) => {
       console.error("AI gateway error:", response.status, t);
       return new Response(JSON.stringify({ error: "AI service error" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Store the Q&A asynchronously after streaming completes
+    if (lastUserMsg) {
+      const originalBody = response.body;
+      const [streamForClient, streamForCapture] = originalBody!.tee();
+
+      // Capture full response in background
+      (async () => {
+        try {
+          const reader = streamForCapture.getReader();
+          const decoder = new TextDecoder();
+          let fullAnswer = "";
+          
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split("\n");
+            for (const line of lines) {
+              if (!line.startsWith("data: ")) continue;
+              const json = line.slice(6).trim();
+              if (json === "[DONE]") continue;
+              try {
+                const parsed = JSON.parse(json);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) fullAnswer += content;
+              } catch {}
+            }
+          }
+
+          if (fullAnswer.length > 20) {
+            const question = lastUserMsg.content.slice(0, 500);
+            const answer = fullAnswer.slice(0, 2000);
+            
+            await fetch(`${SUPABASE_URL}/rest/v1/chat_knowledge`, {
+              method: "POST",
+              headers: {
+                apikey: SUPABASE_SERVICE_ROLE_KEY,
+                Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                "Content-Type": "application/json",
+                Prefer: "return=minimal",
+              },
+              body: JSON.stringify({ question, answer }),
+            });
+          }
+        } catch (e) {
+          console.error("Knowledge storage error:", e);
+        }
+      })();
+
+      return new Response(streamForClient, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
       });
     }
 

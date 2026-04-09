@@ -129,7 +129,7 @@ Excellence. Innovation. Leadership.`;
               
               {/* Image container */}
               <div className="relative rounded-2xl overflow-hidden shadow-elevated">
-                <img src={deanPhoto} alt="Faculty Officer" className="w-full aspect-[4/5] object-cover" />
+                <img src={deanPhoto} alt="Faculty Officer" loading="lazy" decoding="async" className="w-full aspect-[4/5] object-cover" />
                 
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-transparent to-transparent" />
