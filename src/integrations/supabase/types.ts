@@ -149,6 +149,36 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_knowledge: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          question: string
+          topic_tags: string[] | null
+          updated_at: string
+          usage_count: number
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          id?: string
+          question: string
+          topic_tags?: string[] | null
+          updated_at?: string
+          usage_count?: number
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          question?: string
+          topic_tags?: string[] | null
+          updated_at?: string
+          usage_count?: number
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           content: string

@@ -95,9 +95,9 @@ const AlumniHome = () => (
         <h3 className="font-display text-base sm:text-lg font-semibold text-foreground mb-4">Upcoming Events</h3>
         <div className="space-y-3 sm:space-y-4">
           {[
-            { event: "Annual Alumni Dinner", date: "December 15, 2024" },
-            { event: "Career Mentorship Program", date: "January 10, 2025" },
-            { event: "Homecoming Weekend", date: "March 20-22, 2025" },
+            { event: "Annual Alumni Dinner & Awards Night", date: "July 19, 2026" },
+            { event: "Career Mentorship & Networking Summit", date: "September 12, 2026" },
+            { event: "Homecoming Weekend & Faculty Tour", date: "November 21-23, 2026" },
           ].map((item, index) => (
             <motion.div
               key={item.event}
