@@ -156,7 +156,7 @@ const Footer = () => {
         <div className="container mx-auto px-4 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-white/50 text-center md:text-left">
-              © {new Date().getFullYear()} Faculty of Computing, University of Ibadan. All rights reserved.
+              © {new Date().getFullYear()} Nwamauzor Emmanuel Chidera. All rights reserved. Faculty of Computing, University of Ibadan.
             </p>
             <div className="flex items-center gap-6 text-sm text-white/50">
               <Link to="/privacy" className="hover:text-primary transition-colors">
