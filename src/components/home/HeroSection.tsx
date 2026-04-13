@@ -51,7 +51,7 @@ const HeroSection = () => {
             y: 0
           }} transition={{
             duration: 0.6
-          }} className="order-2 lg:order-2 text-center lg:text-left">
+          }} className="order-1 lg:order-2 text-center lg:text-left">
             <motion.div initial={{
               opacity: 0,
               y: 20
