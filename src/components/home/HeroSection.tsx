@@ -28,7 +28,7 @@ const HeroSection = () => {
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-4 sm:pt-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-          {/* Star Graphic */}
+          {/* Star Graphic - hidden on small mobile, shown on sm+ */}
           <motion.div initial={{
             opacity: 0,
             scale: 0.8
@@ -38,7 +38,7 @@ const HeroSection = () => {
           }} transition={{
             duration: 0.8,
             delay: 0.2
-          }} className="order-1 lg:order-1 max-w-xs sm:max-w-md mx-auto lg:max-w-lg">
+          }} className="order-2 lg:order-1 hidden sm:block max-w-xs sm:max-w-md mx-auto lg:max-w-lg">
             <StarGraphic />
           </motion.div>
 
