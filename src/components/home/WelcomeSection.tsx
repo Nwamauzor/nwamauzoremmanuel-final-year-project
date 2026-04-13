@@ -25,30 +25,33 @@ Welcome to a world of limitless possibilities at the Faculty of Computing, Unive
 
 Excellence. Innovation. Leadership.`;
 
-  return <section className="py-16 lg:py-24 bg-background">
+  return <section className="py-12 sm:py-16 lg:py-24 bg-background relative">
+      {/* Mobile blue accent at top */}
+      <div className="absolute top-0 left-4 right-4 sm:left-8 sm:right-8 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Content */}
           <motion.div initial={{
-          opacity: 0,
-          x: -30
-        }} whileInView={{
-          opacity: 1,
-          x: 0
-        }} viewport={{
-          once: true
-        }} transition={{
-          duration: 0.6
-        }}>
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+            opacity: 0,
+            x: -30
+          }} whileInView={{
+            opacity: 1,
+            x: 0
+          }} viewport={{
+            once: true
+          }} transition={{
+            duration: 0.6
+          }}>
+            <span className="inline-block px-3 sm:px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-4 sm:mb-6">
               Welcome Message
             </span>
             
-            <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-6">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4 sm:mb-6">
               Welcome to the Faculty of Computing
             </h2>
             
-            <div className="text-muted-foreground leading-relaxed">
+            <div className="text-sm sm:text-base text-muted-foreground leading-relaxed">
               <AnimatePresence mode="wait">
                 {isExpanded ? (
                   <motion.div
@@ -76,20 +79,20 @@ Excellence. Innovation. Leadership.`;
             </div>
 
             <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} viewport={{
-            once: true
-          }} transition={{
-            delay: 0.3,
-            duration: 0.5
-          }} className="mt-8">
+              opacity: 0,
+              y: 20
+            }} whileInView={{
+              opacity: 1,
+              y: 0
+            }} viewport={{
+              once: true
+            }} transition={{
+              delay: 0.3,
+              duration: 0.5
+            }} className="mt-6 sm:mt-8">
               <Button 
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="bg-accent-gold hover:bg-accent-gold/90 text-accent-gold-foreground font-semibold px-6 py-3 h-auto rounded-lg shadow-md hover:shadow-lg transition-all group"
+                className="bg-accent-gold hover:bg-accent-gold/90 text-accent-gold-foreground font-semibold px-5 sm:px-6 py-2.5 sm:py-3 h-auto rounded-lg shadow-md hover:shadow-lg transition-all group text-sm"
               >
                 {isExpanded ? "Show Less" : "Read More"}
                 {isExpanded ? (
@@ -100,11 +103,11 @@ Excellence. Innovation. Leadership.`;
               </Button>
             </motion.div>
 
-            <div className="mt-8 pt-8 border-t border-border">
+            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border">
               <p className="text-sm text-muted-foreground">
                 <strong className="text-foreground">Prof. A. B. Adeyemo</strong>
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Dean, Faculty of Computing
               </p>
             </div>
@@ -112,20 +115,20 @@ Excellence. Innovation. Leadership.`;
 
           {/* Image */}
           <motion.div initial={{
-          opacity: 0,
-          x: 30
-        }} whileInView={{
-          opacity: 1,
-          x: 0
-        }} viewport={{
-          once: true
-        }} transition={{
-          duration: 0.6,
-          delay: 0.2
-        }} className="relative">
-            <div className="relative">
+            opacity: 0,
+            x: 30
+          }} whileInView={{
+            opacity: 1,
+            x: 0
+          }} viewport={{
+            once: true
+          }} transition={{
+            duration: 0.6,
+            delay: 0.2
+          }} className="relative">
+            <div className="relative max-w-sm mx-auto lg:max-w-none">
               {/* Background decoration */}
-              <div className="absolute -inset-4 bg-gradient-sky rounded-2xl opacity-10 blur-2xl" />
+              <div className="absolute -inset-3 sm:-inset-4 bg-gradient-sky rounded-2xl opacity-10 blur-2xl" />
               
               {/* Image container */}
               <div className="relative rounded-2xl overflow-hidden shadow-elevated">
@@ -135,24 +138,24 @@ Excellence. Innovation. Leadership.`;
                 <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-transparent to-transparent" />
                 
                 {/* Caption */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <p className="text-white font-display font-semibold text-lg">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                  <p className="text-primary-foreground font-display font-semibold text-base sm:text-lg">
                     Prof. A. B. Adeyemo
                   </p>
-                  <p className="text-white/80 text-sm">
+                  <p className="text-primary-foreground/80 text-xs sm:text-sm">
                     Dean, Faculty of Computing
                   </p>
                 </div>
               </div>
 
               {/* Floating badge */}
-              <motion.div className="absolute -top-4 -right-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg font-display font-semibold text-sm" animate={{
-              y: [0, -5, 0]
-            }} transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}>
+              <motion.div className="absolute -top-3 -right-2 sm:-top-4 sm:-right-4 bg-primary text-primary-foreground px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-lg font-display font-semibold text-xs sm:text-sm" animate={{
+                y: [0, -5, 0]
+              }} transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}>
                 Est. 2023
               </motion.div>
             </div>
@@ -161,4 +164,5 @@ Excellence. Innovation. Leadership.`;
       </div>
     </section>;
 };
+
 export default WelcomeSection;
