@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import AiPageSummary from "@/components/ai/AiPageSummary";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -75,6 +76,13 @@ const DepartmentDetail = ({
     <div className="space-y-8 sm:space-y-12">
       {/* Back Button */}
       <BackButton />
+
+      {/* AI Summary */}
+      <AiPageSummary
+        pageName={dept.name}
+        pagePath={`/departments/${deptId}`}
+        pageContext={`${dept.description}. Offers courses from 100L to 500L.`}
+      />
 
       {/* Department Hero */}
       <section className="relative h-64 sm:h-80 rounded-2xl overflow-hidden">

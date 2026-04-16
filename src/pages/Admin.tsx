@@ -21,6 +21,7 @@ import { motion } from "framer-motion";
 import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe, Moon, Sun } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { useTheme } from "next-themes";
+import AdminAiPanel from "@/components/ai/AdminAiPanel";
 
 const ADMIN_VERIFIED_KEY = "admin_verified_uid";
 
@@ -535,6 +536,17 @@ const Admin = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* AI Command Center */}
+        <AdminAiPanel
+          staffCount={staff.length}
+          coursesCount={courses.length}
+          timetableCount={timetable.length}
+          contentCount={siteContent.length}
+          journalsCount={journals.length}
+          pagesWithContent={[...new Set(siteContent.map((c: any) => c.page))]}
+          pagesWithoutContent={MANAGED_PAGES.filter(p => !siteContent.some((c: any) => c.page === p))}
+        />
+
         <Tabs defaultValue="content" className="w-full">
           <TabsList className="grid w-full grid-cols-5 h-auto p-1 bg-muted mb-6">
             <TabsTrigger value="content" className="py-2 text-xs sm:text-sm gap-1">

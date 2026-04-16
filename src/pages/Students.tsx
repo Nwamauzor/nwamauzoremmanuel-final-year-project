@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import AiPageSummary from "@/components/ai/AiPageSummary";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { GraduationCap, Calendar, ClipboardCheck, Shield, ExternalLink, BookOpen } from "lucide-react";
@@ -588,6 +589,11 @@ const Students = () => {
       <section className="py-12 sm:py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <BackButton />
+          <AiPageSummary
+            pageName={`Students - ${currentSubpage.charAt(0).toUpperCase() + currentSubpage.slice(1)}`}
+            pagePath={`/students/${currentSubpage}`}
+            pageContext="Faculty of Computing student resources including admission, activities, registration, grading, and conduct"
+          />
           {renderContent()}
         </div>
       </section>
