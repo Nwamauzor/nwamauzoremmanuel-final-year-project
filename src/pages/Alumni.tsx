@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import AiPageSummary from "@/components/ai/AiPageSummary";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Home, Handshake, Users, GraduationCap, Award, Briefcase } from "lucide-react";
@@ -296,6 +297,7 @@ const Alumni = () => {
       <section className="py-12 sm:py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <BackButton />
+          <AiPageSummary pageName="Alumni Network" pagePath="/alumni" pageContext="Faculty of Computing alumni community, 5000+ graduates, mentorship, events" />
           {renderContent()}
         </div>
       </section>
