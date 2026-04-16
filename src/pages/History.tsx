@@ -1,4 +1,5 @@
 import Layout from "@/components/layout/Layout";
+import AiPageSummary from "@/components/ai/AiPageSummary";
 import { motion } from "framer-motion";
 import { AnimatedSeparator, CornerAccent } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn } from "@/components/animations/PageTransition";
@@ -93,6 +94,8 @@ const History = () => {
       <section className="py-12 sm:py-16 lg:py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <BackButton />
+
+          <AiPageSummary pageName="History of Computing" pagePath="/history" pageContext="Established March 24, 2025 by University Senate. 4 departments, 5 programmes." />
 
           <div className="max-w-4xl mx-auto relative">
             {/* Vertical timeline line */}
