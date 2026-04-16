@@ -38,7 +38,7 @@ const HeroSection = () => {
           }} transition={{
             duration: 0.8,
             delay: 0.2
-          }} className="order-2 lg:order-1 flex justify-center max-w-xs sm:max-w-md mx-auto lg:max-w-lg">
+          }} className="order-2 lg:order-1 flex justify-center w-full mx-auto">
             <StarGraphic />
           </motion.div>
 
