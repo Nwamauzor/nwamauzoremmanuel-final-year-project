@@ -784,6 +784,11 @@ const Admin = () => {
                 </motion.div>
               )}
 
+              <div className="relative mb-4 max-w-sm">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <Input value={staffSearch} onChange={(e) => setStaffSearch(e.target.value)} placeholder="Search staff by name, role, department..." className="pl-9 h-9 text-sm" />
+              </div>
+
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -798,7 +803,7 @@ const Admin = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {staff.map((s) => (
+                    {filteredStaff.map((s) => (
                       <TableRow key={s.id}>
                         <TableCell className="text-xs sm:text-sm">{editingId === s.id ? <Input value={editData.name || ""} onChange={(e) => setEditData({ ...editData, name: e.target.value })} className="h-8 text-xs" /> : s.name}</TableCell>
                         <TableCell className="text-xs hidden md:table-cell">{editingId === s.id ? <Input value={editData.qualification || ""} onChange={(e) => setEditData({ ...editData, qualification: e.target.value })} className="h-8 text-xs" /> : s.qualification}</TableCell>
@@ -811,7 +816,7 @@ const Admin = () => {
                     ))}
                   </TableBody>
                 </Table>
-                {staff.length === 0 && <p className="text-center text-muted-foreground py-8 text-sm">No staff records. Click "Add Staff" to begin.</p>}
+                {filteredStaff.length === 0 && <p className="text-center text-muted-foreground py-8 text-sm">{staff.length === 0 ? 'No staff records. Click "Add Staff" to begin.' : "No staff match your search."}</p>}
               </div>
             </div>
           </TabsContent>
