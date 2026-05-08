@@ -865,6 +865,11 @@ const Admin = () => {
                 </motion.div>
               )}
 
+              <div className="relative mb-4 max-w-sm">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <Input value={coursesSearch} onChange={(e) => setCoursesSearch(e.target.value)} placeholder="Search by code, title, level, department..." className="pl-9 h-9 text-sm" />
+              </div>
+
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -880,7 +885,7 @@ const Admin = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {courses.map((c) => (
+                    {filteredCourses.map((c) => (
                       <TableRow key={c.id}>
                         <TableCell className="text-xs font-mono">{editingId === c.id ? <Input value={editData.code || ""} onChange={(e) => setEditData({ ...editData, code: e.target.value })} className="h-8 text-xs" /> : c.code}</TableCell>
                         <TableCell className="text-xs">{editingId === c.id ? <Input value={editData.title || ""} onChange={(e) => setEditData({ ...editData, title: e.target.value })} className="h-8 text-xs" /> : c.title}</TableCell>
@@ -894,7 +899,7 @@ const Admin = () => {
                     ))}
                   </TableBody>
                 </Table>
-                {courses.length === 0 && <p className="text-center text-muted-foreground py-8 text-sm">No courses yet.</p>}
+                {filteredCourses.length === 0 && <p className="text-center text-muted-foreground py-8 text-sm">{courses.length === 0 ? "No courses yet." : "No courses match your search."}</p>}
               </div>
             </div>
           </TabsContent>
