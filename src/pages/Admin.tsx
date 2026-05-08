@@ -518,12 +518,6 @@ const Admin = () => {
   const filteredTimetable = timetable.filter((t) => matches(timetableSearch, t.day, t.time_slot, t.course_code, t.venue, t.lecturer, t.department));
   const filteredJournals = journals.filter((j) => matches(journalsSearch, j.title, j.description, j.volume, j.issue, j.year, j.file_name));
 
-  const SearchBar = ({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) => (
-    <div className="relative mb-4 max-w-sm">
-      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-      <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="pl-9 h-9 text-sm" />
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-background">
