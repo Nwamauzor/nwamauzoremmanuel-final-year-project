@@ -85,6 +85,10 @@ const Admin = () => {
   const [verifyingCode, setVerifyingCode] = useState(false);
   const [contentFilterPage, setContentFilterPage] = useState("all");
   const [contentFilterSection, setContentFilterSection] = useState("");
+  const [staffSearch, setStaffSearch] = useState("");
+  const [coursesSearch, setCoursesSearch] = useState("");
+  const [timetableSearch, setTimetableSearch] = useState("");
+  const [journalsSearch, setJournalsSearch] = useState("");
   const { resolvedTheme, setTheme } = useTheme();
   const { toast } = useToast();
 
