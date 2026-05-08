@@ -540,6 +540,35 @@ const Admin = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Stats overview */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+          {[
+            { label: "Site Content", value: siteContent.length, icon: FileText, color: "from-blue-500/20 to-blue-500/5", iconColor: "text-blue-500" },
+            { label: "Staff", value: staff.length, icon: Users, color: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-500" },
+            { label: "Courses", value: courses.length, icon: BookOpen, color: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-500" },
+            { label: "Timetable", value: timetable.length, icon: Clock, color: "from-purple-500/20 to-purple-500/5", iconColor: "text-purple-500" },
+            { label: "Journals", value: journals.length, icon: Database, color: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-500" },
+          ].map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className={`relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br ${stat.color} p-4 shadow-sm hover:shadow-md transition-shadow`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
+                  <p className="text-2xl sm:text-3xl font-display font-bold text-foreground mt-1">{stat.value}</p>
+                </div>
+                <div className={`p-2 rounded-lg bg-background/60 backdrop-blur-sm ${stat.iconColor}`}>
+                  <stat.icon className="w-4 h-4" />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
         {/* AI Command Center */}
         <AdminAiPanel
           staffCount={staff.length}
