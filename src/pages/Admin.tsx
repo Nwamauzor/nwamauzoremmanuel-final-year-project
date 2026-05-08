@@ -935,6 +935,11 @@ const Admin = () => {
                 </motion.div>
               )}
 
+              <div className="relative mb-4 max-w-sm">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <Input value={timetableSearch} onChange={(e) => setTimetableSearch(e.target.value)} placeholder="Search by day, course, lecturer, venue..." className="pl-9 h-9 text-sm" />
+              </div>
+
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -949,7 +954,7 @@ const Admin = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {timetable.map((t) => (
+                    {filteredTimetable.map((t) => (
                       <TableRow key={t.id}>
                         <TableCell className="text-xs">{editingId === t.id ? <Input value={editData.day || ""} onChange={(e) => setEditData({ ...editData, day: e.target.value })} className="h-8 text-xs" /> : t.day}</TableCell>
                         <TableCell className="text-xs">{editingId === t.id ? <Input value={editData.time_slot || ""} onChange={(e) => setEditData({ ...editData, time_slot: e.target.value })} className="h-8 text-xs" /> : t.time_slot}</TableCell>
@@ -962,7 +967,7 @@ const Admin = () => {
                     ))}
                   </TableBody>
                 </Table>
-                {timetable.length === 0 && <p className="text-center text-muted-foreground py-8 text-sm">No timetable entries.</p>}
+                {filteredTimetable.length === 0 && <p className="text-center text-muted-foreground py-8 text-sm">{timetable.length === 0 ? "No timetable entries." : "No entries match your search."}</p>}
               </div>
             </div>
           </TabsContent>
