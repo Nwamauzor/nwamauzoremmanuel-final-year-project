@@ -242,10 +242,18 @@ const Admin = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/admin",
+    // The /~oauth/* proxy routes only exist on Lovable hosting (.lovable.app /
+    // custom domains connected to Lovable). On Vercel they 404, so we use
+    // Supabase's OAuth flow directly — it works on any host as long as the URL
+    // is in the Supabase redirect allow-list.
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin + "/admin",
+        queryParams: { prompt: "select_account" },
+      },
     });
-    if (error) toast({ title: "Error", description: String(error), variant: "destructive" });
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
   };
 
   const handleLogout = async () => {
