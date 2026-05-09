@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe, Moon, Sun, Search, Database, Clock } from "lucide-react";
-import { lovable } from "@/integrations/lovable/index";
+
 import { useTheme } from "next-themes";
 import AdminAiPanel from "@/components/ai/AdminAiPanel";
 
