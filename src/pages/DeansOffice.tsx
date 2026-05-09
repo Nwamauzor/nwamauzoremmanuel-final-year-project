@@ -22,7 +22,6 @@ import { AnimatedCard } from "@/components/animations/DecorativeElements";
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/animations/PageTransition";
 import BackButton from "@/components/layout/BackButton";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { useToast } from "@/hooks/use-toast";
 
 const academicStaff = [
@@ -350,7 +349,13 @@ const Journals = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.href,
+        queryParams: { prompt: "select_account" },
+      },
+    });
     if (error) toast({ title: "Error", description: String(error), variant: "destructive" });
   };
 

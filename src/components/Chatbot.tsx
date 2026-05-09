@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 
 type Msg = { role: "user" | "assistant"; content: string };
 type Conversation = { id: string; title: string; created_at: string };
@@ -200,7 +199,13 @@ const Chatbot = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.href,
+        queryParams: { prompt: "select_account" },
+      },
+    });
     if (!error) setShowAuth(false);
   };
 
