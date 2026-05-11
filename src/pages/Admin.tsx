@@ -532,6 +532,29 @@ const Admin = () => {
   const filteredCourses = courses.filter((c) => matches(coursesSearch, c.code, c.title, c.department, c.level, c.semester, c.status));
   const filteredTimetable = timetable.filter((t) => matches(timetableSearch, t.day, t.time_slot, t.course_code, t.venue, t.lecturer, t.department));
   const filteredJournals = journals.filter((j) => matches(journalsSearch, j.title, j.description, j.volume, j.issue, j.year, j.file_name));
+  const pagesWithContent = [...new Set(siteContent.map((c: any) => c.page))];
+  const pagesWithoutContent = MANAGED_PAGES.filter((page) => !pagesWithContent.includes(page));
+  const uniqueDepartments = [...new Set([
+    ...staff.map((s: any) => s.department),
+    ...courses.map((c: any) => c.department),
+    ...timetable.map((t: any) => t.department),
+  ].filter(Boolean))].sort();
+  const courseLevels = [...new Set(courses.map((c: any) => c.level).filter(Boolean))].sort();
+  const contentCoverage = MANAGED_PAGES.length ? Math.round((pagesWithContent.length / MANAGED_PAGES.length) * 100) : 0;
+  const recentJournals = journals.filter((j: any) => j.year && Number(j.year) >= new Date().getFullYear() - 1).length;
+  const dashboardMetrics = [
+    { label: "Managed Content", value: siteContent.length, detail: `${contentCoverage}% page coverage`, icon: FileText },
+    { label: "Staff Records", value: staff.length, detail: `${uniqueDepartments.length} departments represented`, icon: Users },
+    { label: "Courses", value: courses.length, detail: `${courseLevels.length || 0} academic levels`, icon: BookOpen },
+    { label: "Timetable Entries", value: timetable.length, detail: "Lecture schedule records", icon: Clock },
+    { label: "Journals", value: journals.length, detail: `${recentJournals} recent publications`, icon: Database },
+  ];
+  const smartHealth = [
+    { title: "Content coverage", value: `${contentCoverage}%`, status: pagesWithoutContent.length === 0 ? "Complete" : `${pagesWithoutContent.length} pages need content`, ready: pagesWithoutContent.length === 0 },
+    { title: "Academic data", value: courses.length + staff.length, status: courses.length && staff.length ? "Courses and staff active" : "Add staff and courses", ready: Boolean(courses.length && staff.length) },
+    { title: "Scheduling", value: timetable.length, status: timetable.length ? "Timetable available" : "Add timetable entries", ready: Boolean(timetable.length) },
+    { title: "Research archive", value: journals.length, status: journals.length ? "Journal library active" : "Upload journals from the site", ready: Boolean(journals.length) },
+  ];
 
 
   return (
