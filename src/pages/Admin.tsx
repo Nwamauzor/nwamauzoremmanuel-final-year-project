@@ -559,13 +559,18 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
-      <div className="sticky top-0 z-40 bg-card border-b border-border px-4 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-lg sm:text-xl font-bold text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground text-xs">{user?.email}</p>
+      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border px-4 py-3">
+        <div className="max-w-7xl mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <LayoutDashboard className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="font-display text-lg sm:text-xl font-bold text-foreground">Admin Dashboard</h1>
+              <p className="text-muted-foreground text-xs truncate max-w-[280px]">{user?.email}</p>
+            </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
             <Button
               onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
               variant="outline"
@@ -589,32 +594,72 @@ const Admin = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Stats overview */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-          {[
-            { label: "Site Content", value: siteContent.length, icon: FileText, color: "from-blue-500/20 to-blue-500/5", iconColor: "text-blue-500" },
-            { label: "Staff", value: staff.length, icon: Users, color: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-500" },
-            { label: "Courses", value: courses.length, icon: BookOpen, color: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-500" },
-            { label: "Timetable", value: timetable.length, icon: Clock, color: "from-purple-500/20 to-purple-500/5", iconColor: "text-purple-500" },
-            { label: "Journals", value: journals.length, icon: Database, color: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-500" },
-          ].map((stat, i) => (
+        <div className="mb-6 rounded-2xl border border-border bg-gradient-card p-4 sm:p-5 shadow-sm">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-4">
+            <div>
+              <p className="text-xs uppercase tracking-normal text-primary font-semibold flex items-center gap-2"><Sparkles className="w-4 h-4" />Smart Control Center</p>
+              <h2 className="font-display text-2xl font-bold text-foreground mt-1">Faculty system overview</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">Manage content, people, courses, schedules, and research records from one place.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {dashboardMetrics.map((stat, i) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className={`relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br ${stat.color} p-4 shadow-sm hover:shadow-md transition-shadow`}
+              className="relative overflow-hidden rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
+                  <p className="text-[11px] uppercase tracking-normal text-muted-foreground font-medium">{stat.label}</p>
                   <p className="text-2xl sm:text-3xl font-display font-bold text-foreground mt-1">{stat.value}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{stat.detail}</p>
                 </div>
-                <div className={`p-2 rounded-lg bg-background/60 backdrop-blur-sm ${stat.iconColor}`}>
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
                   <stat.icon className="w-4 h-4" />
                 </div>
               </div>
             </motion.div>
           ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-4 mb-6">
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity className="w-4 h-4 text-primary" />
+              <h2 className="font-display text-lg font-semibold text-foreground">System health</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {smartHealth.map((item) => (
+                <div key={item.title} className="rounded-xl border border-border bg-background p-3 flex items-start gap-3">
+                  <div className={`mt-0.5 rounded-lg p-1.5 ${item.ready ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                    {item.ready ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                    <p className="text-xl font-display font-bold text-foreground">{item.value}</p>
+                    <p className="text-xs text-muted-foreground">{item.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Layers className="w-4 h-4 text-primary" />
+              <h2 className="font-display text-lg font-semibold text-foreground">Original system coverage</h2>
+            </div>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Departments represented</span><span className="font-semibold text-foreground">{uniqueDepartments.length}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Managed pages tracked</span><span className="font-semibold text-foreground">{MANAGED_PAGES.length}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Pages with content</span><span className="font-semibold text-foreground">{pagesWithContent.length}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Academic levels</span><span className="font-semibold text-foreground">{courseLevels.length || 0}</span></div>
+              <div className="pt-3 border-t border-border flex items-center gap-2 text-xs text-muted-foreground"><GraduationCap className="w-4 h-4 text-primary" />Faculty of Computing, University of Ibadan</div>
+            </div>
+          </div>
         </div>
 
         {/* AI Command Center */}
@@ -624,8 +669,8 @@ const Admin = () => {
           timetableCount={timetable.length}
           contentCount={siteContent.length}
           journalsCount={journals.length}
-          pagesWithContent={[...new Set(siteContent.map((c: any) => c.page))]}
-          pagesWithoutContent={MANAGED_PAGES.filter(p => !siteContent.some((c: any) => c.page === p))}
+          pagesWithContent={pagesWithContent}
+          pagesWithoutContent={pagesWithoutContent}
         />
 
         <Tabs defaultValue="content" className="w-full">
