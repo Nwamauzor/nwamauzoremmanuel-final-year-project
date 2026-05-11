@@ -18,7 +18,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe, Moon, Sun, Search, Database, Clock } from "lucide-react";
+import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe, Moon, Sun, Search, Database, Clock, LayoutDashboard, Activity, CheckCircle2, AlertCircle, Sparkles, Layers, GraduationCap } from "lucide-react";
 
 import { useTheme } from "next-themes";
 import AdminAiPanel from "@/components/ai/AdminAiPanel";
@@ -78,7 +78,9 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [accessCode, setAccessCode] = useState("");
   const [showAccessCode, setShowAccessCode] = useState(false);
@@ -226,34 +228,39 @@ const Admin = () => {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (authLoading) return;
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail || !password) {
+      toast({ title: "Missing details", description: "Please enter your email and password.", variant: "destructive" });
+      return;
+    }
+
+    if (authMode === "register" && password !== confirmPassword) {
+      toast({ title: "Passwords do not match", description: "Confirm your password before creating the account.", variant: "destructive" });
+      return;
+    }
+
+    setAuthLoading(true);
     try {
       if (authMode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
         if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-        else toast({ title: "Welcome back!" });
+        else toast({ title: "Welcome back", description: "Enter the admin access code to open the dashboard." });
       } else {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/admin` },
+        });
         if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
         else toast({ title: "Account created", description: "Check your email to verify, then log in." });
       }
     } catch (e: any) {
       toast({ title: "Error", description: e.message, variant: "destructive" });
+    } finally {
+      setAuthLoading(false);
     }
-  };
-
-  const handleGoogleSignIn = async () => {
-    // The /~oauth/* proxy routes only exist on Lovable hosting (.lovable.app /
-    // custom domains connected to Lovable). On Vercel they 404, so we use
-    // Supabase's OAuth flow directly — it works on any host as long as the URL
-    // is in the Supabase redirect allow-list.
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin + "/admin",
-        queryParams: { prompt: "select_account" },
-      },
-    });
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
   };
 
   const handleLogout = async () => {
