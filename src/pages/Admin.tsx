@@ -18,7 +18,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe, Moon, Sun, Search, Database, Clock } from "lucide-react";
+import { LogOut, Plus, Trash2, Edit2, Save, X, Shield, Users, BookOpen, Calendar, Eye, EyeOff, KeyRound, FileText, Globe, Moon, Sun, Search, Database, Clock, LayoutDashboard, Activity, CheckCircle2, AlertCircle, Sparkles, Layers, GraduationCap } from "lucide-react";
 
 import { useTheme } from "next-themes";
 import AdminAiPanel from "@/components/ai/AdminAiPanel";
@@ -78,7 +78,9 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [accessCode, setAccessCode] = useState("");
   const [showAccessCode, setShowAccessCode] = useState(false);
@@ -226,34 +228,39 @@ const Admin = () => {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (authLoading) return;
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail || !password) {
+      toast({ title: "Missing details", description: "Please enter your email and password.", variant: "destructive" });
+      return;
+    }
+
+    if (authMode === "register" && password !== confirmPassword) {
+      toast({ title: "Passwords do not match", description: "Confirm your password before creating the account.", variant: "destructive" });
+      return;
+    }
+
+    setAuthLoading(true);
     try {
       if (authMode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
         if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-        else toast({ title: "Welcome back!" });
+        else toast({ title: "Welcome back", description: "Enter the admin access code to open the dashboard." });
       } else {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/admin` },
+        });
         if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
         else toast({ title: "Account created", description: "Check your email to verify, then log in." });
       }
     } catch (e: any) {
       toast({ title: "Error", description: e.message, variant: "destructive" });
+    } finally {
+      setAuthLoading(false);
     }
-  };
-
-  const handleGoogleSignIn = async () => {
-    // The /~oauth/* proxy routes only exist on Lovable hosting (.lovable.app /
-    // custom domains connected to Lovable). On Vercel they 404, so we use
-    // Supabase's OAuth flow directly — it works on any host as long as the URL
-    // is in the Supabase redirect allow-list.
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin + "/admin",
-        queryParams: { prompt: "select_account" },
-      },
-    });
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
   };
 
   const handleLogout = async () => {
@@ -420,15 +427,14 @@ const Admin = () => {
                 </button>
               </div>
             </div>
-            <Button type="submit" className="w-full">{authMode === "login" ? "Login" : "Register"}</Button>
-            <Button type="button" variant="outline" className="w-full" onClick={handleGoogleSignIn}>
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              Sign in with Google
+            {authMode === "register" && (
+              <div>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input id="confirmPassword" type={showPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm password" className="mt-1" required />
+              </div>
+            )}
+            <Button type="submit" className="w-full" disabled={authLoading}>
+              {authLoading ? "Please wait..." : authMode === "login" ? "Login with Email" : "Create Account"}
             </Button>
           </form>
           <p className="text-center text-sm text-muted-foreground mt-4">
@@ -525,18 +531,46 @@ const Admin = () => {
   const filteredCourses = courses.filter((c) => matches(coursesSearch, c.code, c.title, c.department, c.level, c.semester, c.status));
   const filteredTimetable = timetable.filter((t) => matches(timetableSearch, t.day, t.time_slot, t.course_code, t.venue, t.lecturer, t.department));
   const filteredJournals = journals.filter((j) => matches(journalsSearch, j.title, j.description, j.volume, j.issue, j.year, j.file_name));
+  const pagesWithContent = [...new Set(siteContent.map((c: any) => c.page))];
+  const pagesWithoutContent = MANAGED_PAGES.filter((page) => !pagesWithContent.includes(page));
+  const uniqueDepartments = [...new Set([
+    ...staff.map((s: any) => s.department),
+    ...courses.map((c: any) => c.department),
+    ...timetable.map((t: any) => t.department),
+  ].filter(Boolean))].sort();
+  const courseLevels = [...new Set(courses.map((c: any) => c.level).filter(Boolean))].sort();
+  const contentCoverage = MANAGED_PAGES.length ? Math.round((pagesWithContent.length / MANAGED_PAGES.length) * 100) : 0;
+  const recentJournals = journals.filter((j: any) => j.year && Number(j.year) >= new Date().getFullYear() - 1).length;
+  const dashboardMetrics = [
+    { label: "Managed Content", value: siteContent.length, detail: `${contentCoverage}% page coverage`, icon: FileText },
+    { label: "Staff Records", value: staff.length, detail: `${uniqueDepartments.length} departments represented`, icon: Users },
+    { label: "Courses", value: courses.length, detail: `${courseLevels.length || 0} academic levels`, icon: BookOpen },
+    { label: "Timetable Entries", value: timetable.length, detail: "Lecture schedule records", icon: Clock },
+    { label: "Journals", value: journals.length, detail: `${recentJournals} recent publications`, icon: Database },
+  ];
+  const smartHealth = [
+    { title: "Content coverage", value: `${contentCoverage}%`, status: pagesWithoutContent.length === 0 ? "Complete" : `${pagesWithoutContent.length} pages need content`, ready: pagesWithoutContent.length === 0 },
+    { title: "Academic data", value: courses.length + staff.length, status: courses.length && staff.length ? "Courses and staff active" : "Add staff and courses", ready: Boolean(courses.length && staff.length) },
+    { title: "Scheduling", value: timetable.length, status: timetable.length ? "Timetable available" : "Add timetable entries", ready: Boolean(timetable.length) },
+    { title: "Research archive", value: journals.length, status: journals.length ? "Journal library active" : "Upload journals from the site", ready: Boolean(journals.length) },
+  ];
 
 
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
-      <div className="sticky top-0 z-40 bg-card border-b border-border px-4 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-lg sm:text-xl font-bold text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground text-xs">{user?.email}</p>
+      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border px-4 py-3">
+        <div className="max-w-7xl mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <LayoutDashboard className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="font-display text-lg sm:text-xl font-bold text-foreground">Admin Dashboard</h1>
+              <p className="text-muted-foreground text-xs truncate max-w-[280px]">{user?.email}</p>
+            </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
             <Button
               onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
               variant="outline"
@@ -560,32 +594,72 @@ const Admin = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Stats overview */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-          {[
-            { label: "Site Content", value: siteContent.length, icon: FileText, color: "from-blue-500/20 to-blue-500/5", iconColor: "text-blue-500" },
-            { label: "Staff", value: staff.length, icon: Users, color: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-500" },
-            { label: "Courses", value: courses.length, icon: BookOpen, color: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-500" },
-            { label: "Timetable", value: timetable.length, icon: Clock, color: "from-purple-500/20 to-purple-500/5", iconColor: "text-purple-500" },
-            { label: "Journals", value: journals.length, icon: Database, color: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-500" },
-          ].map((stat, i) => (
+        <div className="mb-6 rounded-2xl border border-border bg-gradient-card p-4 sm:p-5 shadow-sm">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-4">
+            <div>
+              <p className="text-xs uppercase tracking-normal text-primary font-semibold flex items-center gap-2"><Sparkles className="w-4 h-4" />Smart Control Center</p>
+              <h2 className="font-display text-2xl font-bold text-foreground mt-1">Faculty system overview</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">Manage content, people, courses, schedules, and research records from one place.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {dashboardMetrics.map((stat, i) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className={`relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br ${stat.color} p-4 shadow-sm hover:shadow-md transition-shadow`}
+              className="relative overflow-hidden rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
+                  <p className="text-[11px] uppercase tracking-normal text-muted-foreground font-medium">{stat.label}</p>
                   <p className="text-2xl sm:text-3xl font-display font-bold text-foreground mt-1">{stat.value}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{stat.detail}</p>
                 </div>
-                <div className={`p-2 rounded-lg bg-background/60 backdrop-blur-sm ${stat.iconColor}`}>
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
                   <stat.icon className="w-4 h-4" />
                 </div>
               </div>
             </motion.div>
           ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-4 mb-6">
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity className="w-4 h-4 text-primary" />
+              <h2 className="font-display text-lg font-semibold text-foreground">System health</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {smartHealth.map((item) => (
+                <div key={item.title} className="rounded-xl border border-border bg-background p-3 flex items-start gap-3">
+                  <div className={`mt-0.5 rounded-lg p-1.5 ${item.ready ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                    {item.ready ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                    <p className="text-xl font-display font-bold text-foreground">{item.value}</p>
+                    <p className="text-xs text-muted-foreground">{item.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Layers className="w-4 h-4 text-primary" />
+              <h2 className="font-display text-lg font-semibold text-foreground">Original system coverage</h2>
+            </div>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Departments represented</span><span className="font-semibold text-foreground">{uniqueDepartments.length}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Managed pages tracked</span><span className="font-semibold text-foreground">{MANAGED_PAGES.length}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Pages with content</span><span className="font-semibold text-foreground">{pagesWithContent.length}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Academic levels</span><span className="font-semibold text-foreground">{courseLevels.length || 0}</span></div>
+              <div className="pt-3 border-t border-border flex items-center gap-2 text-xs text-muted-foreground"><GraduationCap className="w-4 h-4 text-primary" />Faculty of Computing, University of Ibadan</div>
+            </div>
+          </div>
         </div>
 
         {/* AI Command Center */}
@@ -595,8 +669,8 @@ const Admin = () => {
           timetableCount={timetable.length}
           contentCount={siteContent.length}
           journalsCount={journals.length}
-          pagesWithContent={[...new Set(siteContent.map((c: any) => c.page))]}
-          pagesWithoutContent={MANAGED_PAGES.filter(p => !siteContent.some((c: any) => c.page === p))}
+          pagesWithContent={pagesWithContent}
+          pagesWithoutContent={pagesWithoutContent}
         />
 
         <Tabs defaultValue="content" className="w-full">

@@ -4,7 +4,13 @@ import "./index.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 createRoot(document.getElementById("root")!).render(
-  <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+  <ThemeProvider
+    attribute="class"
+    defaultTheme="light"
+    enableSystem={false}
+    storageKey="faculty-ui-theme"
+    disableTransitionOnChange
+  >
     <App />
   </ThemeProvider>,
 );
